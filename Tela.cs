@@ -12,9 +12,9 @@ namespace Xadrez_Console
             {
                 for (int j = 0; j < tab.Colunas; j++)
                 {
-                    if (tab.peca(i,j) != null)
+                    if (tab.FindPeca(i, j) != null)
                     {
-                        Console.Write($"{tab.peca(i, j)} ");
+                        Console.Write($"{tab.FindPeca(i, j)} ");
                     }
                     else
                     {
@@ -22,7 +22,6 @@ namespace Xadrez_Console
                     }
                 }
                 Console.WriteLine();
-
             }
         }
     }
