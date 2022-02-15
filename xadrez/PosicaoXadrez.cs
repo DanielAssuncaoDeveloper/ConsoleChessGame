@@ -1,13 +1,13 @@
 ﻿using tabuleiro;
 
-namespace Xadrez_Console.xadrez
+namespace xadrez
 {
     class PosicaoXadrez
     {
         public int Linha { get; set; }
         public char Coluna { get; set; }
 
-        public PosicaoXadrez(int linha, char coluna)
+        public PosicaoXadrez(char coluna, int linha)
         {
             Linha = linha;
             Coluna = coluna;
