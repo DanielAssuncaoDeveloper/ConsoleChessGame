@@ -21,8 +21,6 @@ namespace xadrez
         public override bool[,] MovimentosValidos()
         {
             bool[,] movPosiveis = new bool[tab.Linhas, tab.Colunas];
-            int linha = posicao.Linha;
-            int coluna = posicao.Coluna;
 
             Posicao pos = new Posicao(0, 0);
 

@@ -55,7 +55,7 @@ namespace tabuleiro
 
         public void ValidarPosicao(Posicao pos)
         {
-            if (!PosicaoValida(pos))
+            if (PosicaoValida(pos) == false)
             {
                 throw new TabuleiroException("Posição Inválida!");
             }
