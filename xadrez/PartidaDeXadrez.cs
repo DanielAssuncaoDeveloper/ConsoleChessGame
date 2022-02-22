@@ -209,6 +209,22 @@ namespace xadrez
                 DesfazerMovimento(posInicial, posFinal, pecaMorta);
                 throw new TabuleiroException("Você não pode se colocar em xeque!");
             }
+            Peca possivelEnPassant = tab.FindPeca(posFinal);
+            // Jogada Especial: Promoção
+            if (possivelEnPassant is Piao)
+            {
+                if ((possivelEnPassant.cor == Cor.Branca && posFinal.Linha == 0) ||
+                    (possivelEnPassant.cor == Cor.Preta && posFinal.Linha == 7))
+                {
+                    possivelEnPassant = tab.TirarPeca(posFinal);
+                    pecas.Remove(possivelEnPassant);
+                    Peca dama = new Dama(possivelEnPassant.cor, tab);
+                    tab.ColocarPeca(dama, posFinal);
+                    pecas.Add(dama);
+                }
+            }
+            
+
 
             if (EstaEmXeque(Adversaria(jogadorAtual)))
             {
@@ -229,7 +245,6 @@ namespace xadrez
                 MudarJogador();
             }
 
-            Peca possivelEnPassant = tab.FindPeca(posFinal);
             // Jogada Especial: En Passant
             if (possivelEnPassant is Piao && 
                 (posFinal.Linha - 2 == posInicial.Linha ||
