@@ -1,67 +1,74 @@
-﻿
+﻿using Xadrez_Console.Game;
+
 namespace tabuleiro
 {
-    class Tabuleiro
+    class Board
     {
         public int Linhas { get; set; }
         public int Colunas { get; set; }
-        private Peca[,] pecas { get; set; }
+        private Piece[,] pecas { get; set; }
 
-        public Tabuleiro(int linhas, int colunas)
+        public Board(int linhas, int colunas)
         {
             Linhas = linhas;
             Colunas = colunas;
-            pecas = new Peca[linhas, colunas];
+            pecas = new Piece[linhas, colunas];
         }
 
-
-        public Peca FindPeca(int linha, int coluna)
+        /// <summary>
+        /// Retorna a peça posicionada nas cordenadas informadas pelos argumentos
+        /// </summary>
+        /// <param name="row">Linha do tabuleiro</param>
+        /// <param name="column">Coluna do tabuleiro</param>
+        /// <returns</returns>
+        public Piece GetPiece(int row, int column)
         {
-            return pecas[linha, coluna];
+            return pecas[row, column];
         }
-        public Peca FindPeca(Posicao pos)
+
+        public Piece FindPeca(Position pos)
         {
             return pecas[pos.Linha, pos.Coluna];
         }
 
-        public void ColocarPeca(Peca p, Posicao pos)
+        public void ColocarPeca(Piece p, Position pos)
         {
             if (PecaValida(pos))
             {
-                throw new TabuleiroException("Já existe uma peça nessa posição.");
+                throw new ExceptionBoard("Já existe uma peça nessa posição.");
             }
             pecas[pos.Linha, pos.Coluna] = p;
             p.posicao = pos;
         }
 
-        public Peca TirarPeca(Posicao pos)
+        public Piece TirarPeca(Position pos)
         {
             if (FindPeca(pos) == null)
             {
                 return null;
             }
 
-            Peca pecaMorta = pecas[pos.Linha, pos.Coluna];
+            Piece pecaMorta = pecas[pos.Linha, pos.Coluna];
             pecaMorta.posicao = null;
             pecas[pos.Linha, pos.Coluna] = null;
             return pecaMorta;
         }
 
-        public bool PecaValida(Posicao pos)
+        public bool PecaValida(Position pos)
         {
             ValidarPosicao(pos);
             return FindPeca(pos) != null;
         }
 
-        public void ValidarPosicao(Posicao pos)
+        public void ValidarPosicao(Position pos)
         {
             if (PosicaoValida(pos) == false)
             {
-                throw new TabuleiroException("Posição Inválida!");
+                throw new ExceptionBoard("Posição Inválida!");
             }
         }
 
-        public bool PosicaoValida(Posicao pos)
+        public bool PosicaoValida(Position pos)
         {
             if (pos.Linha < 0 || pos.Coluna < 0 || pos.Linha >= Linhas || pos.Coluna >= Colunas)
             {

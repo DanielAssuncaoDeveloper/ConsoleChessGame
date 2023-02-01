@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Text.RegularExpressions;
-
 using tabuleiro;
-using xadrez;
+using Xadrez_Console.Game;
 
 namespace Xadrez_Console
 {
@@ -12,32 +10,34 @@ namespace Xadrez_Console
         {
             try
             {
-                Console.WriteLine();
-                PartidaDeXadrez partida = new PartidaDeXadrez();
-                while (!partida.jogoFinalizado)
+                GameService game = new GameService();
+
+                while (!game.jogoFinalizado)
                 {
                     try
                     {
                         Console.Clear();
-                        Tela.ImprimirPartida(partida);
+                        Screen.PrintGame(game); // IM STOPPED HERE
 
+                        // Lendo posição de origem para iniciar a jogada.
                         Console.Write("Origem: ");
-                        Posicao origem = Tela.LerPosicao().ToPosicao();
-                        partida.ValidarPosicaoOrigem(origem);
+                        Position origem = Screen.LerPosicao().ToPosicao();
 
-                        bool[,] possicoesPossiveis = partida.tab.FindPeca(origem).MovimentosValidos();
+                        game.ValidarPosicaoOrigem(origem);
+
+                        bool[,] possicoesPossiveis = game.tab.FindPeca(origem).MovimentosValidos();
                         Console.Clear();
-                        Tela.ImprimirTabuleiro(partida.tab, possicoesPossiveis);
+                        Screen.ImprimirTabuleiro(game.tab, possicoesPossiveis);
 
                         Console.WriteLine();
                         Console.Write("Destino: ");
-                        Posicao destino = Tela.LerPosicao().ToPosicao();
-                        partida.ValidarPosicaoDestino(origem, destino);
+                        Position destino = Screen.LerPosicao().ToPosicao();
+                        game.ValidarPosicaoDestino(origem, destino);
 
                         Console.WriteLine(destino);
-                        partida.RealizarJogada(origem, destino);
+                        game.RealizarJogada(origem, destino);
                     }
-                    catch (TabuleiroException e)
+                    catch (ExceptionBoard e)
                     {
                         Console.WriteLine(e.Message);
                         Console.ReadLine();
@@ -45,9 +45,9 @@ namespace Xadrez_Console
                     }
                 }
                 Console.Clear();
-                Tela.ImprimirPartida(partida);
+                Screen.PrintGame(game);
             }
-            catch (TabuleiroException e)
+            catch (ExceptionBoard e)
             {
                 Console.WriteLine(e.Message);
             }

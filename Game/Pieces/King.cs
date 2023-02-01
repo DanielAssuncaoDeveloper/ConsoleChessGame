@@ -1,13 +1,13 @@
 ﻿using tabuleiro;
 
-namespace xadrez
+namespace Xadrez_Console.Game.Pieces
 {
-    class Rei : Peca
+    class King : Piece
     {
-        private PartidaDeXadrez partida; 
+        private GameService partida;
 
-        public Rei(Cor cor, Tabuleiro tab, PartidaDeXadrez partida) 
-            : base(cor, tab) 
+        public King(Color cor, Board tab, GameService partida)
+            : base(cor, tab)
         {
             this.partida = partida;
         }
@@ -17,9 +17,9 @@ namespace xadrez
             return "R";
         }
 
-        public bool MovimentoPossivel(Posicao pos)
+        public bool MovimentoPossivel(Position pos)
         {
-            Peca p = tab.FindPeca(pos);
+            Piece p = tab.FindPeca(pos);
             return p == null || p.cor != cor;
         }
 
@@ -27,7 +27,7 @@ namespace xadrez
         {
             bool[,] movPosiveis = new bool[tab.Linhas, tab.Colunas];
 
-            Posicao pos = new Posicao(0, 0);
+            Position pos = new Position(0, 0);
 
             // norte
             pos.DefinirValores(posicao.Linha - 1, posicao.Coluna);
@@ -86,14 +86,14 @@ namespace xadrez
 
 
             // Jogada Especial: Roque 
-            if (QtdMovimento==0 && !partida.xeque)
+            if (QtdMovimento == 0 && !partida.xeque)
             {
                 // Roque pequeno
-                Posicao posTorre1 = new Posicao(posicao.Linha, posicao.Coluna + 3);
+                Position posTorre1 = new Position(posicao.Linha, posicao.Coluna + 3);
                 if (TesteTorreParaRoque(posTorre1))
                 {
-                    Posicao pos1 = new Posicao(posicao.Linha, posicao.Coluna + 1);
-                    Posicao pos2 = new Posicao(posicao.Linha, posicao.Coluna + 2);
+                    Position pos1 = new Position(posicao.Linha, posicao.Coluna + 1);
+                    Position pos2 = new Position(posicao.Linha, posicao.Coluna + 2);
                     if (tab.FindPeca(pos1) == null && tab.FindPeca(pos2) == null)
                     {
                         movPosiveis[posicao.Linha, posicao.Coluna + 2] = true;
@@ -102,14 +102,14 @@ namespace xadrez
                 }
 
                 // Roque Grande
-                Posicao posTorre2 = new Posicao(posicao.Linha, posicao.Coluna - 4);
+                Position posTorre2 = new Position(posicao.Linha, posicao.Coluna - 4);
                 if (TesteTorreParaRoque(posTorre1))
                 {
-                    Posicao pos1 = new Posicao(posicao.Linha, posicao.Coluna - 1);
-                    Posicao pos2 = new Posicao(posicao.Linha, posicao.Coluna - 2);
-                    Posicao pos3 = new Posicao(posicao.Linha, posicao.Coluna - 3);
+                    Position pos1 = new Position(posicao.Linha, posicao.Coluna - 1);
+                    Position pos2 = new Position(posicao.Linha, posicao.Coluna - 2);
+                    Position pos3 = new Position(posicao.Linha, posicao.Coluna - 3);
 
-                    if (tab.FindPeca(pos1) == null && 
+                    if (tab.FindPeca(pos1) == null &&
                         tab.FindPeca(pos2) == null &&
                         tab.FindPeca(pos3) == null)
                     {
@@ -126,10 +126,10 @@ namespace xadrez
             return movPosiveis;
         }
 
-        private bool TesteTorreParaRoque(Posicao pos)
+        private bool TesteTorreParaRoque(Position pos)
         {
-            Peca torre = tab.FindPeca(pos);
-            return torre != null && torre is Torre && torre.cor == cor && torre.QtdMovimento == 0;
+            Piece torre = tab.FindPeca(pos);
+            return torre != null && torre is Rook && torre.cor == cor && torre.QtdMovimento == 0;
         }
 
     }

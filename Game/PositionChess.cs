@@ -1,22 +1,21 @@
 ﻿using tabuleiro;
 
-namespace xadrez
+namespace Xadrez_Console.Game
 {
-    class PosicaoXadrez
+    class PositionChess
     {
         public int Linha { get; set; }
         public char Coluna { get; set; }
 
-        public PosicaoXadrez(char coluna, int linha)
+        public PositionChess(char coluna, int linha)
         {
             Linha = linha;
             Coluna = coluna;
         }
 
-
-        public Posicao ToPosicao()
+        public Position ToPosicao()
         {
-            return new Posicao(8 - Linha, Coluna - 'a');
+            return new Position(8 - Linha, Coluna - 'a');
         }
 
         public override string ToString()

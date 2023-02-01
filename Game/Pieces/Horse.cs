@@ -3,17 +3,17 @@ using System.Collections.Generic;
 
 using tabuleiro;
 
-namespace xadrez
+namespace Xadrez_Console.Game.Pieces
 {
-    class Cavalo : Peca
+    class Horse : Piece
     {
-        public Cavalo(Cor cor, Tabuleiro tab)
+        public Horse(Color cor, Board tab)
             : base(cor, tab) { }
 
 
-        public bool MovimentoPossivel(Posicao pos)
+        public bool MovimentoPossivel(Position pos)
         {
-            Peca p = tab.FindPeca(pos);
+            Piece p = tab.FindPeca(pos);
             return p == null || p.cor != cor;
         }
 
@@ -21,7 +21,7 @@ namespace xadrez
         {
             bool[,] movPosiveis = new bool[tab.Linhas, tab.Colunas];
 
-            Posicao pos = new Posicao(0, 0);
+            Position pos = new Position(0, 0);
 
             // N + O
             pos.DefinirValores(posicao.Linha - 2, posicao.Coluna - 1);
@@ -45,7 +45,7 @@ namespace xadrez
             }
 
             // E + S
-            pos.DefinirValores(posicao.Linha + 1 , posicao.Coluna + 2);
+            pos.DefinirValores(posicao.Linha + 1, posicao.Coluna + 2);
             if (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;

@@ -3,18 +3,18 @@ using System.Collections.Generic;
 
 using tabuleiro;
 
-namespace xadrez
+namespace Xadrez_Console.Game.Pieces
 {
-    class Dama : Peca
+    class Queen : Piece
     {
-        public Dama(Cor cor, Tabuleiro tab)
+        public Queen(Color cor, Board tab)
             : base(cor, tab) { }
 
-       
 
-        public bool MovimentoPossivel(Posicao pos)
+
+        public bool MovimentoPossivel(Position pos)
         {
-            Peca p = tab.FindPeca(pos);
+            Piece p = tab.FindPeca(pos);
             return p == null || p.cor != cor;
         }
 
@@ -22,7 +22,7 @@ namespace xadrez
         {
             bool[,] movPosiveis = new bool[tab.Linhas, tab.Colunas];
 
-            Posicao pos = new Posicao(0, 0);
+            Position pos = new Position(0, 0);
 
             // N
             pos.DefinirValores(posicao.Linha - 1, posicao.Coluna);

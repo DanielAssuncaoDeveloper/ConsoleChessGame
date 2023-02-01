@@ -1,10 +1,10 @@
 ﻿using tabuleiro;
 
-namespace xadrez
+namespace Xadrez_Console.Game.Pieces
 {
-    class Torre : Peca
+    class Rook : Piece
     {
-        public Torre(Cor cor, Tabuleiro tab)
+        public Rook(Color cor, Board tab)
             : base(cor, tab) { }
 
         public override string ToString()
@@ -12,9 +12,9 @@ namespace xadrez
             return "T";
         }
 
-        public bool MovimentoPossivel(Posicao pos)
+        public bool MovimentoPossivel(Position pos)
         {
-            Peca p = tab.FindPeca(pos);
+            Piece p = tab.FindPeca(pos);
             return p == null || p.cor != cor;
         }
 
@@ -22,7 +22,7 @@ namespace xadrez
         {
             bool[,] movPosiveis = new bool[tab.Linhas, tab.Colunas];
 
-            Posicao pos = new Posicao(0, 0);
+            Position pos = new Position(0, 0);
 
             // norte
             pos.DefinirValores(posicao.Linha - 1, posicao.Coluna);

@@ -3,23 +3,23 @@ using System.Collections.Generic;
 
 using tabuleiro;
 
-namespace xadrez
+namespace Xadrez_Console.Game.Pieces
 {
-    class Bispo : Peca
+    class Bishop : Piece
     {
-        public Bispo(Cor cor, Tabuleiro tab)
+        public Bishop(Color cor, Board tab)
             : base(cor, tab) { }
 
-        public bool MovimentoPossivel(Posicao pos)
+        public bool MovimentoPossivel(Position pos)
         {
-            Peca p = tab.FindPeca(pos);
+            Piece p = tab.FindPeca(pos);
             return p == null || p.cor != cor;
         }
 
         public override bool[,] MovimentosValidos()
         {
             bool[,] movPossiveis = new bool[tab.Linhas, tab.Colunas];
-            Posicao pos = new Posicao(0, 0);
+            Position pos = new Position(0, 0);
 
             // NE
             pos.DefinirValores(posicao.Linha - 1, posicao.Coluna + 1);
@@ -39,7 +39,7 @@ namespace xadrez
             while (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPossiveis[pos.Linha, pos.Coluna] = true;
-                if (tab.FindPeca(pos) != null && tab.FindPeca(pos).cor != cor )
+                if (tab.FindPeca(pos) != null && tab.FindPeca(pos).cor != cor)
                 {
                     break;
                 }

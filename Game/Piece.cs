@@ -1,15 +1,17 @@
-﻿namespace tabuleiro
-{
-    abstract class Peca
-    { 
-        public Posicao posicao { get; set; }
-        public Cor cor { get; protected set; }
-        public int QtdMovimento { get; protected set; }
-        public Tabuleiro tab { get; protected set; }
+﻿using tabuleiro;
 
-        public Peca (Cor cor, Tabuleiro tab)
+namespace Xadrez_Console.Game
+{
+    abstract class Piece
+    {
+        public Position posicao { get; set; }
+        public Color cor { get; protected set; }
+        public int QtdMovimento { get; protected set; }
+        public Board tab { get; protected set; }
+
+        public Piece(Color cor, Board tab)
         {
-            this.posicao = null;
+            posicao = null;
             this.cor = cor;
             this.tab = tab;
             QtdMovimento = 0;
@@ -31,7 +33,7 @@
             {
                 for (int j = 0; j < tab.Colunas; j++)
                 {
-                    if (mov[i,j])
+                    if (mov[i, j])
                     {
                         return true;
                     }
@@ -40,7 +42,7 @@
             return false;
         }
 
-        public bool PodeMoverPara(Posicao pos)
+        public bool PodeMoverPara(Position pos)
         {
             return MovimentosValidos()[pos.Linha, pos.Coluna];
         }

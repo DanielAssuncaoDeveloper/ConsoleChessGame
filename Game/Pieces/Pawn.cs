@@ -1,29 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using tabuleiro;
 
-namespace xadrez
+namespace Xadrez_Console.Game.Pieces
 {
-    class Piao : Peca
+    class Pawn : Piece
     {
-        private PartidaDeXadrez partida;
+        private GameService partida;
 
-        public Piao(Cor cor, Tabuleiro tab, PartidaDeXadrez partida)
-            : base(cor, tab) 
+        public Pawn(Color cor, Board tab, GameService partida)
+            : base(cor, tab)
         {
             this.partida = partida;
         }
 
-        private bool ExisteInimigo(Posicao pos)
+        private bool ExisteInimigo(Position pos)
         {
-            Peca p = tab.FindPeca(pos);
+            Piece p = tab.FindPeca(pos);
             return p != null && p.cor != cor;
         }
 
-        public bool MovimentoPossivel(Posicao pos)
+        public bool MovimentoPossivel(Position pos)
         {
-            Peca p = tab.FindPeca(pos);
+            Piece p = tab.FindPeca(pos);
             if (pos.Coluna != posicao.Coluna)
             {
                 return ExisteInimigo(pos);
@@ -35,9 +34,9 @@ namespace xadrez
         {
             bool[,] movPosiveis = new bool[tab.Linhas, tab.Colunas];
 
-            Posicao pos = new Posicao(0, 0);
+            Position pos = new Position(0, 0);
 
-            if (cor == Cor.Branca)
+            if (cor == Color.Branca)
             {
                 // Inicio do Jogo
                 pos.DefinirValores(posicao.Linha - 2, posicao.Coluna);
@@ -71,13 +70,13 @@ namespace xadrez
                 // Jogada Especial: En Passant
                 if (posicao.Linha == 3)
                 {
-                    Posicao esquerda = new Posicao(posicao.Linha, posicao.Coluna - 1);
+                    Position esquerda = new Position(posicao.Linha, posicao.Coluna - 1);
                     if (tab.PosicaoValida(esquerda) && ExisteInimigo(esquerda) &&
                         tab.FindPeca(esquerda) == partida.vulneravelEnPassant)
                     {
                         movPosiveis[esquerda.Linha - 1, esquerda.Coluna] = true;
                     }
-                    Posicao direita = new Posicao(posicao.Linha, posicao.Coluna + 1);
+                    Position direita = new Position(posicao.Linha, posicao.Coluna + 1);
                     if (tab.PosicaoValida(direita) && ExisteInimigo(direita) &&
                         tab.FindPeca(direita) == partida.vulneravelEnPassant)
                     {
@@ -124,13 +123,13 @@ namespace xadrez
             // Jogada Especial: En Passant
             if (posicao.Linha == 4)
             {
-                Posicao esquerda = new Posicao(posicao.Linha, posicao.Coluna - 1);
+                Position esquerda = new Position(posicao.Linha, posicao.Coluna - 1);
                 if (tab.PosicaoValida(esquerda) && ExisteInimigo(esquerda) &&
                     tab.FindPeca(esquerda) == partida.vulneravelEnPassant)
                 {
                     movPosiveis[esquerda.Linha + 1, esquerda.Coluna] = true;
                 }
-                Posicao direita = new Posicao(posicao.Linha, posicao.Coluna + 1);
+                Position direita = new Position(posicao.Linha, posicao.Coluna + 1);
                 if (tab.PosicaoValida(direita) && ExisteInimigo(direita) &&
                     tab.FindPeca(direita) == partida.vulneravelEnPassant)
                 {
