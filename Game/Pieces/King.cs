@@ -17,103 +17,103 @@ namespace Xadrez_Console.Game.Pieces
             return "R";
         }
 
-        public bool MovimentoPossivel(Position pos)
+        public bool MovimentoPossivel(PositionBoard pos)
         {
-            Piece p = tab.FindPeca(pos);
-            return p == null || p.cor != cor;
+            Piece p = Board.GetPiece(pos);
+            return p == null || p.Color != Color;
         }
 
         public override bool[,] MovimentosValidos()
         {
-            bool[,] movPosiveis = new bool[tab.Linhas, tab.Colunas];
+            bool[,] movPosiveis = new bool[Board.Linhas, Board.Colunas];
 
-            Position pos = new Position(0, 0);
+            PositionBoard pos = new PositionBoard(0, 0);
 
             // norte
-            pos.DefinirValores(posicao.Linha - 1, posicao.Coluna);
-            if (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha - 1, Position.Coluna);
+            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // nordeste
-            pos.DefinirValores(posicao.Linha - 1, posicao.Coluna + 1);
-            if (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha - 1, Position.Coluna + 1);
+            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // oeste
-            pos.DefinirValores(posicao.Linha, posicao.Coluna + 1);
-            if (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha, Position.Coluna + 1);
+            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // sudeste
-            pos.DefinirValores(posicao.Linha + 1, posicao.Coluna + 1);
-            if (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha + 1, Position.Coluna + 1);
+            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // sul 
-            pos.DefinirValores(posicao.Linha + 1, posicao.Coluna);
-            if (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha + 1, Position.Coluna);
+            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // suldoeste
-            pos.DefinirValores(posicao.Linha + 1, posicao.Coluna - 1);
-            if (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha + 1, Position.Coluna - 1);
+            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // leste
-            pos.DefinirValores(posicao.Linha, posicao.Coluna - 1);
-            if (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha, Position.Coluna - 1);
+            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // noroeste
-            pos.DefinirValores(posicao.Linha - 1, posicao.Coluna - 1);
-            if (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha - 1, Position.Coluna - 1);
+            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
             }
 
 
             // Jogada Especial: Roque 
-            if (QtdMovimento == 0 && !partida.xeque)
+            if (NumberOfMovements == 0 && !partida.xeque)
             {
                 // Roque pequeno
-                Position posTorre1 = new Position(posicao.Linha, posicao.Coluna + 3);
+                PositionBoard posTorre1 = new PositionBoard(Position.Linha, Position.Coluna + 3);
                 if (TesteTorreParaRoque(posTorre1))
                 {
-                    Position pos1 = new Position(posicao.Linha, posicao.Coluna + 1);
-                    Position pos2 = new Position(posicao.Linha, posicao.Coluna + 2);
-                    if (tab.FindPeca(pos1) == null && tab.FindPeca(pos2) == null)
+                    PositionBoard pos1 = new PositionBoard(Position.Linha, Position.Coluna + 1);
+                    PositionBoard pos2 = new PositionBoard(Position.Linha, Position.Coluna + 2);
+                    if (Board.GetPiece(pos1) == null && Board.GetPiece(pos2) == null)
                     {
-                        movPosiveis[posicao.Linha, posicao.Coluna + 2] = true;
+                        movPosiveis[Position.Linha, Position.Coluna + 2] = true;
                     }
 
                 }
 
                 // Roque Grande
-                Position posTorre2 = new Position(posicao.Linha, posicao.Coluna - 4);
+                PositionBoard posTorre2 = new PositionBoard(Position.Linha, Position.Coluna - 4);
                 if (TesteTorreParaRoque(posTorre1))
                 {
-                    Position pos1 = new Position(posicao.Linha, posicao.Coluna - 1);
-                    Position pos2 = new Position(posicao.Linha, posicao.Coluna - 2);
-                    Position pos3 = new Position(posicao.Linha, posicao.Coluna - 3);
+                    PositionBoard pos1 = new PositionBoard(Position.Linha, Position.Coluna - 1);
+                    PositionBoard pos2 = new PositionBoard(Position.Linha, Position.Coluna - 2);
+                    PositionBoard pos3 = new PositionBoard(Position.Linha, Position.Coluna - 3);
 
-                    if (tab.FindPeca(pos1) == null &&
-                        tab.FindPeca(pos2) == null &&
-                        tab.FindPeca(pos3) == null)
+                    if (Board.GetPiece(pos1) == null &&
+                        Board.GetPiece(pos2) == null &&
+                        Board.GetPiece(pos3) == null)
                     {
-                        movPosiveis[posicao.Linha, posicao.Coluna - 2] = true;
+                        movPosiveis[Position.Linha, Position.Coluna - 2] = true;
                     }
 
                 }
@@ -126,10 +126,10 @@ namespace Xadrez_Console.Game.Pieces
             return movPosiveis;
         }
 
-        private bool TesteTorreParaRoque(Position pos)
+        private bool TesteTorreParaRoque(PositionBoard pos)
         {
-            Piece torre = tab.FindPeca(pos);
-            return torre != null && torre is Rook && torre.cor == cor && torre.QtdMovimento == 0;
+            Piece torre = Board.GetPiece(pos);
+            return torre != null && torre is Rook && torre.Color == Color && torre.NumberOfMovements == 0;
         }
 
     }

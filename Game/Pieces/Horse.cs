@@ -11,70 +11,70 @@ namespace Xadrez_Console.Game.Pieces
             : base(cor, tab) { }
 
 
-        public bool MovimentoPossivel(Position pos)
+        public bool MovimentoPossivel(PositionBoard pos)
         {
-            Piece p = tab.FindPeca(pos);
-            return p == null || p.cor != cor;
+            Piece p = Board.GetPiece(pos);
+            return p == null || p.Color != Color;
         }
 
         public override bool[,] MovimentosValidos()
         {
-            bool[,] movPosiveis = new bool[tab.Linhas, tab.Colunas];
+            bool[,] movPosiveis = new bool[Board.Linhas, Board.Colunas];
 
-            Position pos = new Position(0, 0);
+            PositionBoard pos = new PositionBoard(0, 0);
 
             // N + O
-            pos.DefinirValores(posicao.Linha - 2, posicao.Coluna - 1);
-            if (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha - 2, Position.Coluna - 1);
+            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // N + E
-            pos.DefinirValores(posicao.Linha - 2, posicao.Coluna + 1);
-            if (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha - 2, Position.Coluna + 1);
+            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // E + N
-            pos.DefinirValores(posicao.Linha - 1, posicao.Coluna + 2);
-            if (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha - 1, Position.Coluna + 2);
+            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // E + S
-            pos.DefinirValores(posicao.Linha + 1, posicao.Coluna + 2);
-            if (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha + 1, Position.Coluna + 2);
+            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // S + E
-            pos.DefinirValores(posicao.Linha + 2, posicao.Coluna + 1);
-            if (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha + 2, Position.Coluna + 1);
+            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // S + O
-            pos.DefinirValores(posicao.Linha + 2, posicao.Coluna - 1);
-            if (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha + 2, Position.Coluna - 1);
+            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // O + S
-            pos.DefinirValores(posicao.Linha + 1, posicao.Coluna - 2);
-            if (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha + 1, Position.Coluna - 2);
+            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // O + N
-            pos.DefinirValores(posicao.Linha - 1, posicao.Coluna - 2);
-            if (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha - 1, Position.Coluna - 2);
+            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }

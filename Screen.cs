@@ -16,7 +16,7 @@ namespace Xadrez_Console
         public static void PrintGame(GameService game)
         {
             // Imprimindo o tabuleiro
-            PrintBoard(game.tab);
+            PrintBoard(game.Board);
             Console.WriteLine();
 
             // Imprimindo peças capturadas
@@ -28,7 +28,7 @@ namespace Xadrez_Console
 
             if (!game.jogoFinalizado)
             {
-                Console.WriteLine($"Aguardando jogada da peça: {game.jogadorAtual}");
+                Console.WriteLine($"Aguardando jogada da peça: {game.CurrentPlayerColor}");
 
                 if (game.xeque)
                 {
@@ -38,7 +38,7 @@ namespace Xadrez_Console
             else
             {
                 Console.WriteLine("XEQUEMATE!");
-                Console.WriteLine($"Jogador Vencedor: {game.jogadorAtual}");
+                Console.WriteLine($"Jogador Vencedor: {game.CurrentPlayerColor}");
             }
         }
 
@@ -139,13 +139,19 @@ namespace Xadrez_Console
             Console.BackgroundColor = fundoOriginal;
         }
 
-        public static PositionChess LerPosicao()
+        /// <summary>
+        /// Lê uma posição informada pelo jogador
+        /// </summary>
+        /// <returns></returns>
+        public static PositionBoard ReadPosition()
         {
-            string pos = Console.ReadLine().ToLower();
+            string positionInputed = Console.ReadLine().ToLower();
 
-            char coluna = pos[0];
-            int linha = int.Parse(pos[1].ToString());
-            return new PositionChess(coluna, linha);
+            char column = positionInputed[0];
+            int row = int.Parse(positionInputed[1].ToString());
+
+            var positionChess = new PositionChess(column, row);
+            return positionChess.ConvertToPositionBoard();
         }
 
         /// <summary>
@@ -162,7 +168,7 @@ namespace Xadrez_Console
             else
             {
                 // Imprimindo a peça de acordo com sua cor
-                if (piece.cor == Color.Branca)
+                if (piece.Color == Color.Branca)
                 {
                     Console.Write(piece);
                 }

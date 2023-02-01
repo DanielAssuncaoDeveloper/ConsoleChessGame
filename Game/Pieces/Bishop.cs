@@ -10,23 +10,23 @@ namespace Xadrez_Console.Game.Pieces
         public Bishop(Color cor, Board tab)
             : base(cor, tab) { }
 
-        public bool MovimentoPossivel(Position pos)
+        public bool MovimentoPossivel(PositionBoard pos)
         {
-            Piece p = tab.FindPeca(pos);
-            return p == null || p.cor != cor;
+            Piece p = Board.GetPiece(pos);
+            return p == null || p.Color != Color;
         }
 
         public override bool[,] MovimentosValidos()
         {
-            bool[,] movPossiveis = new bool[tab.Linhas, tab.Colunas];
-            Position pos = new Position(0, 0);
+            bool[,] movPossiveis = new bool[Board.Linhas, Board.Colunas];
+            PositionBoard pos = new PositionBoard(0, 0);
 
             // NE
-            pos.DefinirValores(posicao.Linha - 1, posicao.Coluna + 1);
-            while (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha - 1, Position.Coluna + 1);
+            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPossiveis[pos.Linha, pos.Coluna] = true;
-                if (tab.FindPeca(pos) != null && tab.FindPeca(pos).cor != cor)
+                if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
                 {
                     break;
                 }
@@ -35,11 +35,11 @@ namespace Xadrez_Console.Game.Pieces
             }
 
             // SE
-            pos.DefinirValores(posicao.Linha + 1, posicao.Coluna + 1);
-            while (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha + 1, Position.Coluna + 1);
+            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPossiveis[pos.Linha, pos.Coluna] = true;
-                if (tab.FindPeca(pos) != null && tab.FindPeca(pos).cor != cor)
+                if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
                 {
                     break;
                 }
@@ -49,11 +49,11 @@ namespace Xadrez_Console.Game.Pieces
 
 
             // SO
-            pos.DefinirValores(posicao.Linha + 1, posicao.Coluna - 1);
-            while (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha + 1, Position.Coluna - 1);
+            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPossiveis[pos.Linha, pos.Coluna] = true;
-                if (tab.FindPeca(pos) != null && tab.FindPeca(pos).cor != cor)
+                if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
                 {
                     break;
                 }
@@ -63,11 +63,11 @@ namespace Xadrez_Console.Game.Pieces
 
 
             // SE 
-            pos.DefinirValores(posicao.Linha - 1, posicao.Coluna - 1);
-            while (tab.PosicaoValida(pos) && MovimentoPossivel(pos))
+            pos.DefinirValores(Position.Linha - 1, Position.Coluna - 1);
+            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
             {
                 movPossiveis[pos.Linha, pos.Coluna] = true;
-                if (tab.FindPeca(pos) != null && tab.FindPeca(pos).cor != cor)
+                if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
                 {
                     break;
                 }
