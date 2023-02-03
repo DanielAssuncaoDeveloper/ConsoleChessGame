@@ -20,47 +20,51 @@ namespace tabuleiro
         /// </summary>
         /// <param name="row">Linha do tabuleiro</param>
         /// <param name="column">Coluna do tabuleiro</param>
-        /// <returns</returns>
         public Piece GetPiece(int row, int column)
         {
             return pecas[row, column];
         }
 
-        public Piece FindPeca(Position pos)
+        /// <summary>
+        /// Retorna a peça posicionada nas cordenadas informadas pelos argumentos
+        /// </summary>
+        /// <param name="row">Linha do tabuleiro</param>
+        /// <param name="column">Coluna do tabuleiro</param>
+        public Piece GetPiece(PositionBoard position)
         {
-            return pecas[pos.Linha, pos.Coluna];
+            return pecas[position.Linha, position.Coluna];
         }
 
-        public void ColocarPeca(Piece p, Position pos)
+        public void ColocarPeca(Piece p, PositionBoard pos)
         {
             if (PecaValida(pos))
             {
                 throw new ExceptionBoard("Já existe uma peça nessa posição.");
             }
             pecas[pos.Linha, pos.Coluna] = p;
-            p.posicao = pos;
+            p.Position = pos;
         }
 
-        public Piece TirarPeca(Position pos)
+        public Piece TirarPeca(PositionBoard pos)
         {
-            if (FindPeca(pos) == null)
+            if (GetPiece(pos) == null)
             {
                 return null;
             }
 
             Piece pecaMorta = pecas[pos.Linha, pos.Coluna];
-            pecaMorta.posicao = null;
+            pecaMorta.Position = null;
             pecas[pos.Linha, pos.Coluna] = null;
             return pecaMorta;
         }
 
-        public bool PecaValida(Position pos)
+        public bool PecaValida(PositionBoard pos)
         {
             ValidarPosicao(pos);
-            return FindPeca(pos) != null;
+            return GetPiece(pos) != null;
         }
 
-        public void ValidarPosicao(Position pos)
+        public void ValidarPosicao(PositionBoard pos)
         {
             if (PosicaoValida(pos) == false)
             {
@@ -68,7 +72,7 @@ namespace tabuleiro
             }
         }
 
-        public bool PosicaoValida(Position pos)
+        public bool PosicaoValida(PositionBoard pos)
         {
             if (pos.Linha < 0 || pos.Coluna < 0 || pos.Linha >= Linhas || pos.Coluna >= Colunas)
             {

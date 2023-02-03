@@ -4,34 +4,34 @@ namespace Xadrez_Console.Game
 {
     abstract class Piece
     {
-        public Position posicao { get; set; }
-        public Color cor { get; protected set; }
-        public int QtdMovimento { get; protected set; }
-        public Board tab { get; protected set; }
+        public PositionBoard Position { get; set; }
+        public Color Color { get; protected set; }
+        public int NumberOfMovements { get; protected set; }
+        public Board Board { get; protected set; }
 
-        public Piece(Color cor, Board tab)
+        public Piece(Color color, Board board)
         {
-            posicao = null;
-            this.cor = cor;
-            this.tab = tab;
-            QtdMovimento = 0;
+            Position = null;
+            this.Color = color;
+            this.Board = board;
+            NumberOfMovements = 0;
         }
 
         public void IncrementarMovimentos()
         {
-            QtdMovimento++;
+            NumberOfMovements++;
         }
         public void DecrementarMovimentos()
         {
-            QtdMovimento--;
+            NumberOfMovements--;
         }
 
         public bool ExisteMovimentosPossiveis()
         {
             bool[,] mov = MovimentosValidos();
-            for (int i = 0; i < tab.Linhas; i++)
+            for (int i = 0; i < Board.Linhas; i++)
             {
-                for (int j = 0; j < tab.Colunas; j++)
+                for (int j = 0; j < Board.Colunas; j++)
                 {
                     if (mov[i, j])
                     {
@@ -42,7 +42,7 @@ namespace Xadrez_Console.Game
             return false;
         }
 
-        public bool PodeMoverPara(Position pos)
+        public bool PodeMoverPara(PositionBoard pos)
         {
             return MovimentosValidos()[pos.Linha, pos.Coluna];
         }
