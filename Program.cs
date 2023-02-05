@@ -21,21 +21,21 @@ namespace Xadrez_Console
 
                         // Lendo posição de origem para iniciar a jogada
                         Console.Write("Origem: ");
-                        PositionBoard origem = Screen.ReadPosition();
+                        PositionBoard origin = Screen.ReadPosition();
 
-                        game.ValidateOriginPosition(origem); // IM STOPPED HERE
+                        game.ValidateOriginPosition(origin); // IM STOPPED HERE
 
-                        bool[,] possicoesPossiveis = game.Board.GetPiece(origem).GetValidMoves();
+                        bool[,] possicoesPossiveis = game.Board.GetPiece(origin).GetValidMoves();
                         Console.Clear();
                         Screen.ImprimirTabuleiro(game.Board, possicoesPossiveis);
 
                         Console.WriteLine();
                         Console.Write("Destino: ");
                         PositionBoard destino = Screen.ReadPosition();
-                        game.ValidarPosicaoDestino(origem, destino);
+                        game.ValidarPosicaoDestino(origin, destino);
 
                         Console.WriteLine(destino);
-                        game.RealizarJogada(origem, destino);
+                        game.RealizarJogada(origin, destino);
                     }
                     catch (ExceptionBoard e)
                     {
