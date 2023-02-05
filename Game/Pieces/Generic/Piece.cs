@@ -1,22 +1,23 @@
 ﻿using tabuleiro;
+using Xadrez_Console.Game.Enum;
 
-namespace Xadrez_Console.Game
+namespace Xadrez_Console.Game.Pieces.Abstract
 {
     /// <summary>
     /// Uma classe abstrata para ser herdada de outras peças implementadas
     /// </summary>
     abstract class Piece
     {
-        public PositionBoard Position { get; set; }
+        public PositionOnBoard Position { get; set; }
         public Color Color { get; protected set; }
         public int NumberOfMovements { get; protected set; }
-        public Board Board { get; protected set; }
+        public BoardService Board { get; protected set; }
 
-        public Piece(Color color, Board board)
+        public Piece(Color color, BoardService board)
         {
             Position = null;
-            this.Color = color;
-            this.Board = board;
+            Color = color;
+            Board = board;
             NumberOfMovements = 0;
         }
 
@@ -52,7 +53,7 @@ namespace Xadrez_Console.Game
             return false;
         }
 
-        public bool PodeMoverPara(PositionBoard pos)
+        public bool PodeMoverPara(PositionOnBoard pos)
         {
             return GetValidMoves()[pos.Linha, pos.Coluna];
         }

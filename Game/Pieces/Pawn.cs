@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using tabuleiro;
+using Xadrez_Console.Game.Enum;
+using Xadrez_Console.Game.Pieces.Abstract;
 
 namespace Xadrez_Console.Game.Pieces
 {
@@ -8,19 +10,19 @@ namespace Xadrez_Console.Game.Pieces
     {
         private GameService partida;
 
-        public Pawn(Color cor, Board tab, GameService partida)
+        public Pawn(Color cor, tabuleiro.BoardService tab, GameService partida)
             : base(cor, tab)
         {
             this.partida = partida;
         }
 
-        private bool ExisteInimigo(PositionBoard pos)
+        private bool ExisteInimigo(PositionOnBoard pos)
         {
             Piece p = Board.GetPiece(pos);
             return p != null && p.Color != Color;
         }
 
-        public bool MovimentoPossivel(PositionBoard pos)
+        public bool MovimentoPossivel(PositionOnBoard pos)
         {
             Piece p = Board.GetPiece(pos);
             if (pos.Coluna != Position.Coluna)
@@ -34,9 +36,9 @@ namespace Xadrez_Console.Game.Pieces
         {
             bool[,] movPosiveis = new bool[Board.Linhas, Board.Colunas];
 
-            PositionBoard pos = new PositionBoard(0, 0);
+            PositionOnBoard pos = new PositionOnBoard(0, 0);
 
-            if (Color == Color.Branca)
+            if (Color == Color.White)
             {
                 // Inicio do Jogo
                 pos.DefinirValores(Position.Linha - 2, Position.Coluna);
@@ -70,13 +72,13 @@ namespace Xadrez_Console.Game.Pieces
                 // Jogada Especial: En Passant
                 if (Position.Linha == 3)
                 {
-                    PositionBoard esquerda = new PositionBoard(Position.Linha, Position.Coluna - 1);
+                    PositionOnBoard esquerda = new PositionOnBoard(Position.Linha, Position.Coluna - 1);
                     if (Board.PosicaoValida(esquerda) && ExisteInimigo(esquerda) &&
                         Board.GetPiece(esquerda) == partida.vulneravelEnPassant)
                     {
                         movPosiveis[esquerda.Linha - 1, esquerda.Coluna] = true;
                     }
-                    PositionBoard direita = new PositionBoard(Position.Linha, Position.Coluna + 1);
+                    PositionOnBoard direita = new PositionOnBoard(Position.Linha, Position.Coluna + 1);
                     if (Board.PosicaoValida(direita) && ExisteInimigo(direita) &&
                         Board.GetPiece(direita) == partida.vulneravelEnPassant)
                     {
@@ -123,13 +125,13 @@ namespace Xadrez_Console.Game.Pieces
             // Jogada Especial: En Passant
             if (Position.Linha == 4)
             {
-                PositionBoard esquerda = new PositionBoard(Position.Linha, Position.Coluna - 1);
+                PositionOnBoard esquerda = new PositionOnBoard(Position.Linha, Position.Coluna - 1);
                 if (Board.PosicaoValida(esquerda) && ExisteInimigo(esquerda) &&
                     Board.GetPiece(esquerda) == partida.vulneravelEnPassant)
                 {
                     movPosiveis[esquerda.Linha + 1, esquerda.Coluna] = true;
                 }
-                PositionBoard direita = new PositionBoard(Position.Linha, Position.Coluna + 1);
+                PositionOnBoard direita = new PositionOnBoard(Position.Linha, Position.Coluna + 1);
                 if (Board.PosicaoValida(direita) && ExisteInimigo(direita) &&
                     Board.GetPiece(direita) == partida.vulneravelEnPassant)
                 {

@@ -1,14 +1,15 @@
-﻿using Xadrez_Console.Game;
+﻿using Xadrez_Console.Board.Exception;
+using Xadrez_Console.Game.Pieces.Abstract;
 
 namespace tabuleiro
 {
-    class Board
+    class BoardService
     {
         public int Linhas { get; set; }
         public int Colunas { get; set; }
         private Piece[,] pecas { get; set; }
 
-        public Board(int linhas, int colunas)
+        public BoardService(int linhas, int colunas)
         {
             Linhas = linhas;
             Colunas = colunas;
@@ -30,12 +31,12 @@ namespace tabuleiro
         /// </summary>
         /// <param name="row">Linha do tabuleiro</param>
         /// <param name="column">Coluna do tabuleiro</param>
-        public Piece GetPiece(PositionBoard position)
+        public Piece GetPiece(PositionOnBoard position)
         {
             return pecas[position.Linha, position.Coluna];
         }
 
-        public void ColocarPeca(Piece p, PositionBoard pos)
+        public void ColocarPeca(Piece p, PositionOnBoard pos)
         {
             if (PecaValida(pos))
             {
@@ -45,7 +46,7 @@ namespace tabuleiro
             p.Position = pos;
         }
 
-        public Piece TirarPeca(PositionBoard pos)
+        public Piece TirarPeca(PositionOnBoard pos)
         {
             if (GetPiece(pos) == null)
             {
@@ -58,13 +59,13 @@ namespace tabuleiro
             return pecaMorta;
         }
 
-        public bool PecaValida(PositionBoard pos)
+        public bool PecaValida(PositionOnBoard pos)
         {
             ValidarPosicao(pos);
             return GetPiece(pos) != null;
         }
 
-        public void ValidarPosicao(PositionBoard pos)
+        public void ValidarPosicao(PositionOnBoard pos)
         {
             if (PosicaoValida(pos) == false)
             {
@@ -72,7 +73,7 @@ namespace tabuleiro
             }
         }
 
-        public bool PosicaoValida(PositionBoard pos)
+        public bool PosicaoValida(PositionOnBoard pos)
         {
             if (pos.Linha < 0 || pos.Coluna < 0 || pos.Linha >= Linhas || pos.Coluna >= Colunas)
             {

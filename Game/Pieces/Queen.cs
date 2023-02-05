@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 
 using tabuleiro;
+using Xadrez_Console.Game.Enum;
+using Xadrez_Console.Game.Pieces.Abstract;
 
 namespace Xadrez_Console.Game.Pieces
 {
     class Queen : Piece
     {
-        public Queen(Color cor, Board tab)
+        public Queen(Color cor, tabuleiro.BoardService tab)
             : base(cor, tab) { }
 
 
 
-        public bool MovimentoPossivel(PositionBoard pos)
+        public bool MovimentoPossivel(PositionOnBoard pos)
         {
             Piece p = Board.GetPiece(pos);
             return p == null || p.Color != Color;
@@ -22,7 +24,7 @@ namespace Xadrez_Console.Game.Pieces
         {
             bool[,] movPosiveis = new bool[Board.Linhas, Board.Colunas];
 
-            PositionBoard pos = new PositionBoard(0, 0);
+            PositionOnBoard pos = new PositionOnBoard(0, 0);
 
             // N
             pos.DefinirValores(Position.Linha - 1, Position.Coluna);

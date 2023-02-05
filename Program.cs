@@ -1,5 +1,6 @@
 ﻿using System;
 using tabuleiro;
+using Xadrez_Console.Board.Exception;
 using Xadrez_Console.Game;
 
 namespace Xadrez_Console
@@ -21,7 +22,7 @@ namespace Xadrez_Console
 
                         // Lendo posição de origem para iniciar a jogada
                         Console.Write("Origem: ");
-                        PositionBoard origin = Screen.ReadPosition();
+                        PositionOnBoard origin = Screen.ReadPosition();
 
                         game.ValidateOriginPosition(origin); // IM STOPPED HERE
 
@@ -31,7 +32,7 @@ namespace Xadrez_Console
 
                         Console.WriteLine();
                         Console.Write("Destino: ");
-                        PositionBoard destino = Screen.ReadPosition();
+                        PositionOnBoard destino = Screen.ReadPosition();
                         game.ValidarPosicaoDestino(origin, destino);
 
                         Console.WriteLine(destino);
