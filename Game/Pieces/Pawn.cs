@@ -30,7 +30,7 @@ namespace Xadrez_Console.Game.Pieces
             return p == null;
         }
 
-        public override bool[,] MovimentosValidos()
+        public override bool[,] GetValidMoves()
         {
             bool[,] movPosiveis = new bool[Board.Linhas, Board.Colunas];
 

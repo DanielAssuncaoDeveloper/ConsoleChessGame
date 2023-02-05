@@ -2,6 +2,9 @@
 
 namespace Xadrez_Console.Game
 {
+    /// <summary>
+    /// Uma classe abstrata para ser herdada de outras peças implementadas
+    /// </summary>
     abstract class Piece
     {
         public PositionBoard Position { get; set; }
@@ -26,14 +29,21 @@ namespace Xadrez_Console.Game
             NumberOfMovements--;
         }
 
-        public bool ExisteMovimentosPossiveis()
+        /// <summary>
+        /// Verifica se a peça tem algum movimento possível a ser realizado
+        /// </summary>
+        /// <returns>Boleano (<see langword="true"/> ou <see langword="false"/>)</returns>
+        public bool ExistsPossibleMoves()
         {
-            bool[,] mov = MovimentosValidos();
-            for (int i = 0; i < Board.Linhas; i++)
+            // Consultando os movimentos válidos da peça
+            bool[,] validMoves = GetValidMoves();
+
+            // Percorrendo cada posição para verificar se existe uma posição válida
+            for (int row = 0; row < Board.Linhas; row++)
             {
-                for (int j = 0; j < Board.Colunas; j++)
+                for (int column = 0; column < Board.Colunas; column++)
                 {
-                    if (mov[i, j])
+                    if (validMoves[row, column])
                     {
                         return true;
                     }
@@ -44,10 +54,15 @@ namespace Xadrez_Console.Game
 
         public bool PodeMoverPara(PositionBoard pos)
         {
-            return MovimentosValidos()[pos.Linha, pos.Coluna];
+            return GetValidMoves()[pos.Linha, pos.Coluna];
         }
 
-        public abstract bool[,] MovimentosValidos();
+        /// <summary>
+        /// Obtêm os movimentos possíveis da peça
+        /// </summary>
+        /// <returns>Uma matriz boleana onde cada elemento <see langword="true"/> indica que a posição é válida e
+        /// onde for <see langword="false"/>, indica que sa posição é inválida</returns>
+        public abstract bool[,] GetValidMoves();
 
 
     }

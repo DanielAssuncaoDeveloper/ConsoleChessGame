@@ -46,7 +46,7 @@ namespace Xadrez_Console.Game
             if (Board.GetPiece(position).Color != CurrentPlayerColor)
                 throw new ExceptionBoard("A peça de origem escolhida não é sua!");
 
-            if (!Board.GetPiece(position).ExisteMovimentosPossiveis()) // IM STOPPED HERE
+            if (!Board.GetPiece(position).ExistsPossibleMoves()) 
                 throw new ExceptionBoard("Não existe movimentos possíveis para a peça de origem escolhida!");
         }
 
@@ -260,7 +260,7 @@ namespace Xadrez_Console.Game
             PositionBoard posicaoRei = FindRei(cor).Position;
             foreach (Piece p in PecasEmJogo(Adversaria(cor)))
             {
-                if (p.MovimentosValidos()[posicaoRei.Linha, posicaoRei.Coluna])
+                if (p.GetValidMoves()[posicaoRei.Linha, posicaoRei.Coluna])
                 {
                     return true;
                 }
@@ -277,7 +277,7 @@ namespace Xadrez_Console.Game
 
             foreach (Piece p in PecasEmJogo(cor))
             {
-                bool[,] movPossiveis = p.MovimentosValidos();
+                bool[,] movPossiveis = p.GetValidMoves();
                 for (int i = 0; i < Board.Linhas; i++)
                 {
                     for (int j = 0; j < Board.Colunas; j++)

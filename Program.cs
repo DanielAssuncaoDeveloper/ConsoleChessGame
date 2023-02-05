@@ -23,9 +23,9 @@ namespace Xadrez_Console
                         Console.Write("Origem: ");
                         PositionBoard origem = Screen.ReadPosition();
 
-                        game.ValidateOriginPosition(origem);
+                        game.ValidateOriginPosition(origem); // IM STOPPED HERE
 
-                        bool[,] possicoesPossiveis = game.Board.GetPiece(origem).MovimentosValidos();
+                        bool[,] possicoesPossiveis = game.Board.GetPiece(origem).GetValidMoves();
                         Console.Clear();
                         Screen.ImprimirTabuleiro(game.Board, possicoesPossiveis);
 

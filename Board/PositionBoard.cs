@@ -1,7 +1,7 @@
 ﻿namespace tabuleiro
 {
     /// <summary>
-    /// Representa as posições da matriz do tabuleiro (0-7/0-7)
+    /// Representa a posição em uma matriz referente ao tabuleiro de 8/8
     /// </summary>
     class PositionBoard
     {

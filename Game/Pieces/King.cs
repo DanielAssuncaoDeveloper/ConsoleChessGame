@@ -23,7 +23,7 @@ namespace Xadrez_Console.Game.Pieces
             return p == null || p.Color != Color;
         }
 
-        public override bool[,] MovimentosValidos()
+        public override bool[,] GetValidMoves()
         {
             bool[,] movPosiveis = new bool[Board.Linhas, Board.Colunas];
 
