@@ -1,7 +1,7 @@
 ﻿using tabuleiro;
-using Xadrez_Console.Game.Enum;
+using ConsoleChessGame.Game.Enum;
 
-namespace Xadrez_Console.Game.Pieces.Abstract
+namespace ConsoleChessGame.Game.Pieces.Abstract
 {
     /// <summary>
     /// Uma classe abstrata para ser herdada de outras peças implementadas
@@ -53,9 +53,13 @@ namespace Xadrez_Console.Game.Pieces.Abstract
             return false;
         }
 
-        public bool PodeMoverPara(PositionOnBoard pos)
+        /// <summary>
+        /// Verifica se a peça pode mover para uma posição enviada por parametro
+        /// </summary>
+        /// <param name="position">Posição a qual deseja mover a peça</param>
+        public bool CanMoveTo(PositionOnBoard position)
         {
-            return GetValidMoves()[pos.Linha, pos.Coluna];
+            return GetValidMoves()[position.Linha, position.Coluna];
         }
 
         /// <summary>

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using tabuleiro;
-using Xadrez_Console.Game.Enum;
-using Xadrez_Console.Game.Pieces.Abstract;
+using ConsoleChessGame.Game.Enum;
+using ConsoleChessGame.Game.Pieces.Abstract;
 
-namespace Xadrez_Console.Game.Pieces
+namespace ConsoleChessGame.Game.Pieces
 {
     class Pawn : Piece
     {
@@ -74,13 +74,13 @@ namespace Xadrez_Console.Game.Pieces
                 {
                     PositionOnBoard esquerda = new PositionOnBoard(Position.Linha, Position.Coluna - 1);
                     if (Board.PosicaoValida(esquerda) && ExisteInimigo(esquerda) &&
-                        Board.GetPiece(esquerda) == partida.vulneravelEnPassant)
+                        Board.GetPiece(esquerda) == partida.VulnerablePiecesForEnPassant)
                     {
                         movPosiveis[esquerda.Linha - 1, esquerda.Coluna] = true;
                     }
                     PositionOnBoard direita = new PositionOnBoard(Position.Linha, Position.Coluna + 1);
                     if (Board.PosicaoValida(direita) && ExisteInimigo(direita) &&
-                        Board.GetPiece(direita) == partida.vulneravelEnPassant)
+                        Board.GetPiece(direita) == partida.VulnerablePiecesForEnPassant)
                     {
                         movPosiveis[direita.Linha - 1, direita.Coluna] = true;
                     }
@@ -127,13 +127,13 @@ namespace Xadrez_Console.Game.Pieces
             {
                 PositionOnBoard esquerda = new PositionOnBoard(Position.Linha, Position.Coluna - 1);
                 if (Board.PosicaoValida(esquerda) && ExisteInimigo(esquerda) &&
-                    Board.GetPiece(esquerda) == partida.vulneravelEnPassant)
+                    Board.GetPiece(esquerda) == partida.VulnerablePiecesForEnPassant)
                 {
                     movPosiveis[esquerda.Linha + 1, esquerda.Coluna] = true;
                 }
                 PositionOnBoard direita = new PositionOnBoard(Position.Linha, Position.Coluna + 1);
                 if (Board.PosicaoValida(direita) && ExisteInimigo(direita) &&
-                    Board.GetPiece(direita) == partida.vulneravelEnPassant)
+                    Board.GetPiece(direita) == partida.VulnerablePiecesForEnPassant)
                 {
                     movPosiveis[direita.Linha + 1, direita.Coluna] = true;
                 }

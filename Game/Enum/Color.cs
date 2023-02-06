@@ -1,4 +1,4 @@
-﻿namespace Xadrez_Console.Game.Enum
+﻿namespace ConsoleChessGame.Game.Enum
 {
     enum Color : int
     {

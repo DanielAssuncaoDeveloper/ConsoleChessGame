@@ -1,8 +1,8 @@
 ﻿using tabuleiro;
-using Xadrez_Console.Game.Enum;
-using Xadrez_Console.Game.Pieces.Abstract;
+using ConsoleChessGame.Game.Enum;
+using ConsoleChessGame.Game.Pieces.Abstract;
 
-namespace Xadrez_Console.Game.Pieces
+namespace ConsoleChessGame.Game.Pieces
 {
     class King : Piece
     {
@@ -88,7 +88,7 @@ namespace Xadrez_Console.Game.Pieces
 
 
             // Jogada Especial: Roque 
-            if (NumberOfMovements == 0 && !partida.xeque)
+            if (NumberOfMovements == 0 && !partida.IsCheck)
             {
                 // Roque pequeno
                 PositionOnBoard posTorre1 = new PositionOnBoard(Position.Linha, Position.Coluna + 3);

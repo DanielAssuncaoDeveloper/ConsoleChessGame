@@ -1,13 +1,14 @@
 ﻿using tabuleiro;
-using Xadrez_Console.Game.Enum;
-using Xadrez_Console.Game.Pieces.Abstract;
+using ConsoleChessGame.Game.Enum;
+using ConsoleChessGame.Game.Pieces.Abstract;
 
-namespace Xadrez_Console.Game.Pieces
+namespace ConsoleChessGame.Game.Pieces
 {
     class Rook : Piece
     {
-        public Rook(Color cor, tabuleiro.BoardService tab)
-            : base(cor, tab) { }
+        public Rook(Color color, BoardService board) 
+            : base(color, board) 
+        { }
 
         public override string ToString()
         {

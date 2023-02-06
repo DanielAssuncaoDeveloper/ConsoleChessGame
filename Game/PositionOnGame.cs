@@ -1,6 +1,6 @@
 ﻿using tabuleiro;
 
-namespace Xadrez_Console.Game
+namespace ConsoleChessGame.Game
 {
     /// <summary>
     /// Representa as posições do Xadrez (1-8/A-H)

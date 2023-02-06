@@ -1,9 +1,9 @@
 ﻿using System;
 using tabuleiro;
-using Xadrez_Console.Board.Exception;
-using Xadrez_Console.Game;
+using ConsoleChessGame.Board.Exception;
+using ConsoleChessGame.Game;
 
-namespace Xadrez_Console
+namespace ConsoleChessGame
 {
     class Program
     {
@@ -11,32 +11,30 @@ namespace Xadrez_Console
         {
             try
             {
-                GameService game = new GameService();
-
-                while (!game.jogoFinalizado)
+                while (!GameService.FinishedGame)
                 {
                     try
                     {
                         Console.Clear();
-                        Screen.PrintGame(game);
+                        Screen.PrintGame();
 
                         // Lendo posição de origem para iniciar a jogada
                         Console.Write("Origem: ");
                         PositionOnBoard origin = Screen.ReadPosition();
 
-                        game.ValidateOriginPosition(origin); // IM STOPPED HERE
+                        GameService.ValidateOriginPosition(origin); // IM STOPPED HERE
 
-                        bool[,] possicoesPossiveis = game.Board.GetPiece(origin).GetValidMoves();
+                        bool[,] possicoesPossiveis = GameService.Board.GetPiece(origin).GetValidMoves();
                         Console.Clear();
-                        Screen.ImprimirTabuleiro(game.Board, possicoesPossiveis);
+                        Screen.ImprimirTabuleiro(GameService.Board, possicoesPossiveis);
 
                         Console.WriteLine();
                         Console.Write("Destino: ");
                         PositionOnBoard destino = Screen.ReadPosition();
-                        game.ValidarPosicaoDestino(origin, destino);
+                        GameService.ValidateDestinationPosition(origin, destino);
 
                         Console.WriteLine(destino);
-                        game.RealizarJogada(origin, destino);
+                        GameService.RealizarJogada(origin, destino);
                     }
                     catch (ExceptionBoard e)
                     {

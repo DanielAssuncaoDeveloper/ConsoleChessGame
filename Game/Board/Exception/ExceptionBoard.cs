@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Xadrez_Console.Board.Exception
+namespace ConsoleChessGame.Board.Exception
 {
     class ExceptionBoard : ApplicationException
     {

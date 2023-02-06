@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 
 using tabuleiro;
-using Xadrez_Console.Game.Enum;
-using Xadrez_Console.Game.Pieces.Abstract;
+using ConsoleChessGame.Game.Enum;
+using ConsoleChessGame.Game.Pieces.Abstract;
 
-namespace Xadrez_Console.Game.Pieces
+namespace ConsoleChessGame.Game.Pieces
 {
     class Bishop : Piece
     {

@@ -1,5 +1,5 @@
-﻿using Xadrez_Console.Board.Exception;
-using Xadrez_Console.Game.Pieces.Abstract;
+﻿using ConsoleChessGame.Board.Exception;
+using ConsoleChessGame.Game.Pieces.Abstract;
 
 namespace tabuleiro
 {

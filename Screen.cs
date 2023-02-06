@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using tabuleiro;
-using Xadrez_Console.Game;
-using Xadrez_Console.Game.Enum;
-using Xadrez_Console.Game.Pieces.Abstract;
+using ConsoleChessGame.Game;
+using ConsoleChessGame.Game.Enum;
+using ConsoleChessGame.Game.Pieces.Abstract;
 
-namespace Xadrez_Console
+namespace ConsoleChessGame
 {
     class Screen
     {
@@ -26,13 +26,13 @@ namespace Xadrez_Console
             Console.WriteLine();
 
             // Imprimindo turno atual
-            Console.WriteLine($"Turno: {game.turno}");
+            Console.WriteLine($"Turno: {game.Turn}");
 
-            if (!game.jogoFinalizado)
+            if (!game.FinishedGame)
             {
                 Console.WriteLine($"Aguardando jogada da peça: {game.CurrentPlayerColor}");
 
-                if (game.xeque)
+                if (game.IsCheck)
                 {
                     Console.WriteLine("XEQUE!");
                 }
@@ -55,7 +55,7 @@ namespace Xadrez_Console
             // Imprimindo peças Brancas capturadas
             Console.Write("Brancas: ");
 
-            var capturedWhitePieces = partida.CapturedPieces(Color.White);
+            var capturedWhitePieces = partida.GetCapturedPieces(Color.White);
             PrintCapturedGroup(capturedWhitePieces);
             Console.WriteLine();
             
@@ -64,7 +64,7 @@ namespace Xadrez_Console
 
             // Imprimindo peças Vermelhas
             Console.Write("Vermelhas: ");
-            PrintCapturedGroup(partida.CapturedPieces(Color.Red));
+            PrintCapturedGroup(partida.GetCapturedPieces(Color.Red));
 
             Console.ForegroundColor = colorDefault;
             Console.WriteLine();
