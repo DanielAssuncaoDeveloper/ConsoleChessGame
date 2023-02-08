@@ -49,21 +49,21 @@ namespace ConsoleChessGame.Game.Pieces
 
                 // N
                 pos.DefinirValores(Position.Linha - 1, Position.Coluna);
-                if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+                if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
                 {
                     movPosiveis[pos.Linha, pos.Coluna] = true;
                 }
 
                 // NE
                 pos.DefinirValores(Position.Linha - 1, Position.Coluna + 1);
-                if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+                if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
                 {
                     movPosiveis[pos.Linha, pos.Coluna] = true;
                 }
 
                 // NO
                 pos.DefinirValores(Position.Linha - 1, Position.Coluna - 1);
-                if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+                if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
                 {
                     movPosiveis[pos.Linha, pos.Coluna] = true;
                 }
@@ -73,13 +73,13 @@ namespace ConsoleChessGame.Game.Pieces
                 if (Position.Linha == 3)
                 {
                     PositionOnBoard esquerda = new PositionOnBoard(Position.Linha, Position.Coluna - 1);
-                    if (Board.PosicaoValida(esquerda) && ExisteInimigo(esquerda) &&
+                    if (Board.IsValidPosition(esquerda) && ExisteInimigo(esquerda) &&
                         Board.GetPiece(esquerda) == partida.VulnerablePiecesForEnPassant)
                     {
                         movPosiveis[esquerda.Linha - 1, esquerda.Coluna] = true;
                     }
                     PositionOnBoard direita = new PositionOnBoard(Position.Linha, Position.Coluna + 1);
-                    if (Board.PosicaoValida(direita) && ExisteInimigo(direita) &&
+                    if (Board.IsValidPosition(direita) && ExisteInimigo(direita) &&
                         Board.GetPiece(direita) == partida.VulnerablePiecesForEnPassant)
                     {
                         movPosiveis[direita.Linha - 1, direita.Coluna] = true;
@@ -100,21 +100,21 @@ namespace ConsoleChessGame.Game.Pieces
 
                 // N
                 pos.DefinirValores(Position.Linha + 1, Position.Coluna);
-                if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+                if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
                 {
                     movPosiveis[pos.Linha, pos.Coluna] = true;
                 }
 
                 // NE
                 pos.DefinirValores(Position.Linha + 1, Position.Coluna + 1);
-                if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+                if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
                 {
                     movPosiveis[pos.Linha, pos.Coluna] = true;
                 }
 
                 // NO
                 pos.DefinirValores(Position.Linha + 1, Position.Coluna - 1);
-                if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+                if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
                 {
                     movPosiveis[pos.Linha, pos.Coluna] = true;
                 }
@@ -126,13 +126,13 @@ namespace ConsoleChessGame.Game.Pieces
             if (Position.Linha == 4)
             {
                 PositionOnBoard esquerda = new PositionOnBoard(Position.Linha, Position.Coluna - 1);
-                if (Board.PosicaoValida(esquerda) && ExisteInimigo(esquerda) &&
+                if (Board.IsValidPosition(esquerda) && ExisteInimigo(esquerda) &&
                     Board.GetPiece(esquerda) == partida.VulnerablePiecesForEnPassant)
                 {
                     movPosiveis[esquerda.Linha + 1, esquerda.Coluna] = true;
                 }
                 PositionOnBoard direita = new PositionOnBoard(Position.Linha, Position.Coluna + 1);
-                if (Board.PosicaoValida(direita) && ExisteInimigo(direita) &&
+                if (Board.IsValidPosition(direita) && ExisteInimigo(direita) &&
                     Board.GetPiece(direita) == partida.VulnerablePiecesForEnPassant)
                 {
                     movPosiveis[direita.Linha + 1, direita.Coluna] = true;

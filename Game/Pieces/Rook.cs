@@ -29,7 +29,7 @@ namespace ConsoleChessGame.Game.Pieces
 
             // norte
             pos.DefinirValores(Position.Linha - 1, Position.Coluna);
-            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
@@ -42,7 +42,7 @@ namespace ConsoleChessGame.Game.Pieces
 
             // oeste
             pos.DefinirValores(Position.Linha, Position.Coluna + 1);
-            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
@@ -55,7 +55,7 @@ namespace ConsoleChessGame.Game.Pieces
 
             // sul
             pos.DefinirValores(Position.Linha + 1, Position.Coluna);
-            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
@@ -67,7 +67,7 @@ namespace ConsoleChessGame.Game.Pieces
             }
 
             pos.DefinirValores(Position.Linha, Position.Coluna - 1);
-            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)

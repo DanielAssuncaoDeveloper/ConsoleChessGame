@@ -28,7 +28,7 @@ namespace ConsoleChessGame.Game.Pieces
 
             // N
             pos.DefinirValores(Position.Linha - 1, Position.Coluna);
-            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
@@ -41,7 +41,7 @@ namespace ConsoleChessGame.Game.Pieces
 
             // NE
             pos.DefinirValores(Position.Linha - 1, Position.Coluna + 1);
-            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
@@ -54,7 +54,7 @@ namespace ConsoleChessGame.Game.Pieces
 
             // E
             pos.DefinirValores(Position.Linha, Position.Coluna + 1);
-            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
@@ -67,7 +67,7 @@ namespace ConsoleChessGame.Game.Pieces
 
             // SE
             pos.DefinirValores(Position.Linha + 1, Position.Coluna + 1);
-            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
@@ -80,7 +80,7 @@ namespace ConsoleChessGame.Game.Pieces
 
             // S
             pos.DefinirValores(Position.Linha + 1, Position.Coluna);
-            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
@@ -93,7 +93,7 @@ namespace ConsoleChessGame.Game.Pieces
 
             // SO
             pos.DefinirValores(Position.Linha + 1, Position.Coluna + 1);
-            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
@@ -106,7 +106,7 @@ namespace ConsoleChessGame.Game.Pieces
 
             // O
             pos.DefinirValores(Position.Linha, Position.Coluna - 1);
-            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
@@ -119,7 +119,7 @@ namespace ConsoleChessGame.Game.Pieces
 
             // NO
             pos.DefinirValores(Position.Linha - 1, Position.Coluna - 1);
-            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)

@@ -5,7 +5,6 @@ using ConsoleChessGame.Board.Exception;
 using ConsoleChessGame.Game.Enum;
 using ConsoleChessGame.Game.Pieces;
 using ConsoleChessGame.Game.Pieces.Abstract;
-using System.Reflection.Metadata.Ecma335;
 
 namespace ConsoleChessGame.Game
 {
@@ -117,78 +116,84 @@ namespace ConsoleChessGame.Game
             return piecesInGame;
         }
 
-        public Piece ExecutarMovimento(PositionOnBoard posInicial, PositionOnBoard posFinal)
+        /// <summary>
+        /// Realiza uma jogada com base nas posições informadas
+        /// </summary>
+        /// <param name="initialPosition">Posição inicial da peça que deseja realizar o movimento</param>
+        /// <param name="finalPosition">Posição final da peça escolhida</param>
+        /// <returns>Uma instância de <see langword="Piece"/> da a peça movimentada</returns>
+        public static Piece MakeAPlay(PositionOnBoard initialPosition, PositionOnBoard finalPosition)
         {
-            Piece pecaMovimentada = Board.TirarPeca(posInicial);
-            pecaMovimentada.IncrementarMovimentos();
-            Piece pecaMorta = Board.TirarPeca(posFinal);
-            Board.ColocarPeca(pecaMovimentada, posFinal);
-            if (pecaMorta != null)
-            {
-                CapturedPieces.Add(pecaMorta);
-            }
+            Piece movimentedPiece = Board.RemovePiece(initialPosition);
+            movimentedPiece.IncreaseMovement();
+
+            Piece capturedPiece = Board.RemovePiece(finalPosition);
+            Board.PutPiece(movimentedPiece, finalPosition);
+
+            if (capturedPiece is not null)
+                CapturedPieces.Add(capturedPiece); // STOPPED HERE
 
             // Jogada Especial: Roque Pequeno
-            if (pecaMovimentada is King && posFinal.Coluna == posInicial.Coluna + 2)
+            if (movimentedPiece is King && finalPosition.Coluna == initialPosition.Coluna + 2)
             {
-                PositionOnBoard posTorre = new PositionOnBoard(posInicial.Linha, posInicial.Coluna + 3);
-                PositionOnBoard destinoTorre = new PositionOnBoard(posInicial.Linha, posInicial.Coluna + 1);
-                Piece torre = Board.TirarPeca(posTorre);
-                torre.IncrementarMovimentos();
-                Board.ColocarPeca(torre, destinoTorre);
+                PositionOnBoard posTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 3);
+                PositionOnBoard destinoTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 1);
+                Piece torre = Board.RemovePiece(posTorre);
+                torre.IncreaseMovement();
+                Board.PutPiece(torre, destinoTorre);
             }
             // Jogada Especial: Roque Grande
-            if (pecaMovimentada is King && posFinal.Coluna == posInicial.Coluna - 2)
+            if (movimentedPiece is King && finalPosition.Coluna == initialPosition.Coluna - 2)
             {
-                PositionOnBoard posTorre = new PositionOnBoard(posInicial.Linha, posInicial.Coluna - 4);
-                PositionOnBoard destinoTorre = new PositionOnBoard(posInicial.Linha, posInicial.Coluna - 1);
-                Piece torre = Board.TirarPeca(posTorre);
-                torre.IncrementarMovimentos();
-                Board.ColocarPeca(torre, destinoTorre);
+                PositionOnBoard posTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 4);
+                PositionOnBoard destinoTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 1);
+                Piece torre = Board.RemovePiece(posTorre);
+                torre.IncreaseMovement();
+                Board.PutPiece(torre, destinoTorre);
             }
 
             // Jogada Especial: En Passant
-            if (pecaMovimentada is Pawn)
+            if (movimentedPiece is Pawn)
             {
-                if (posFinal.Coluna != posInicial.Coluna &&
-                    pecaMorta == null)
+                if (finalPosition.Coluna != initialPosition.Coluna &&
+                    capturedPiece == null)
                 {
                     PositionOnBoard posP;
-                    if (pecaMovimentada.Color == Color.White)
+                    if (movimentedPiece.Color == Color.White)
                     {
-                        posP = new PositionOnBoard(posFinal.Linha + 1, posFinal.Coluna);
+                        posP = new PositionOnBoard(finalPosition.Linha + 1, finalPosition.Coluna);
                     }
                     else
                     {
-                        posP = new PositionOnBoard(posFinal.Linha - 1, posFinal.Coluna);
+                        posP = new PositionOnBoard(finalPosition.Linha - 1, finalPosition.Coluna);
                     }
-                    pecaMorta = Board.TirarPeca(posP);
-                    CapturedPieces.Add(pecaMorta);
+                    capturedPiece = Board.RemovePiece(posP);
+                    CapturedPieces.Add(capturedPiece);
                 }
             }
 
-            return pecaMorta;
+            return capturedPiece;
         }
 
         public void DesfazerMovimento(PositionOnBoard posInicial, PositionOnBoard posFinal, Piece pecaCapturada)
         {
-            Piece p = Board.TirarPeca(posFinal);
-            p.DecrementarMovimentos();
+            Piece p = Board.RemovePiece(posFinal);
+            p.DecrementMovement();
             if (pecaCapturada != null)
             {
-                Board.ColocarPeca(pecaCapturada, posFinal);
+                Board.PutPiece(pecaCapturada, posFinal);
                 CapturedPieces.Remove(p);
             }
-            Board.ColocarPeca(p, posInicial);
+            Board.PutPiece(p, posInicial);
 
             // Jogada Especial: Roque Pequeno
             if (p is King && posInicial.Coluna + 2 == posFinal.Coluna)
             {
                 PositionOnBoard posTorre = new PositionOnBoard(posInicial.Linha, posInicial.Coluna + 3);
                 PositionOnBoard destinoTorre = new PositionOnBoard(posInicial.Linha, posInicial.Coluna + 1);
-                Piece torre = Board.TirarPeca(destinoTorre);
-                torre.IncrementarMovimentos();
-                Board.ColocarPeca(torre, posTorre);
+                Piece torre = Board.RemovePiece(destinoTorre);
+                torre.IncreaseMovement();
+                Board.PutPiece(torre, posTorre);
             }
 
             // Jogada Especial: Roque Grande
@@ -196,9 +201,9 @@ namespace ConsoleChessGame.Game
             {
                 PositionOnBoard posTorre = new PositionOnBoard(posInicial.Linha, posInicial.Coluna - 4);
                 PositionOnBoard destinoTorre = new PositionOnBoard(posInicial.Linha, posInicial.Coluna - 1);
-                Piece torre = Board.TirarPeca(destinoTorre);
-                torre.IncrementarMovimentos();
-                Board.ColocarPeca(torre, posTorre);
+                Piece torre = Board.RemovePiece(destinoTorre);
+                torre.IncreaseMovement();
+                Board.PutPiece(torre, posTorre);
             }
 
 
@@ -208,7 +213,7 @@ namespace ConsoleChessGame.Game
                 if (posFinal.Coluna != posInicial.Coluna &&
                     pecaCapturada == VulnerablePiecesForEnPassant)
                 {
-                    Piece peao = Board.TirarPeca(posFinal);
+                    Piece peao = Board.RemovePiece(posFinal);
                     PositionOnBoard posP;
                     if (p.Color == Color.White)
                     {
@@ -218,7 +223,7 @@ namespace ConsoleChessGame.Game
                     {
                         posP = new PositionOnBoard(4, posFinal.Coluna);
                     }
-                    Board.ColocarPeca(peao, posP);
+                    Board.PutPiece(peao, posP);
                 }
             }
 
@@ -226,7 +231,7 @@ namespace ConsoleChessGame.Game
 
         public void RealizarJogada(PositionOnBoard posInicial, PositionOnBoard posFinal)
         {
-            Piece pecaMorta = ExecutarMovimento(posInicial, posFinal);
+            Piece pecaMorta = MakeAPlay(posInicial, posFinal);
             if (EstaEmXeque(CurrentPlayerColor))
             {
                 DesfazerMovimento(posInicial, posFinal, pecaMorta);
@@ -239,10 +244,10 @@ namespace ConsoleChessGame.Game
                 if (possivelEnPassant.Color == Color.White && posFinal.Linha == 0 ||
                     possivelEnPassant.Color == Color.Red && posFinal.Linha == 7)
                 {
-                    possivelEnPassant = Board.TirarPeca(posFinal);
+                    possivelEnPassant = Board.RemovePiece(posFinal);
                     Pieces.Remove(possivelEnPassant);
                     Piece dama = new Queen(possivelEnPassant.Color, Board);
-                    Board.ColocarPeca(dama, posFinal);
+                    Board.PutPiece(dama, posFinal);
                     Pieces.Add(dama);
                 }
             }
@@ -314,7 +319,7 @@ namespace ConsoleChessGame.Game
                             PositionOnBoard destino = new PositionOnBoard(i, j);
                             PositionOnBoard origem = p.Position;
 
-                            Piece pecaCapturada = ExecutarMovimento(origem, destino);
+                            Piece pecaCapturada = MakeAPlay(origem, destino);
                             bool testeXeque = EstaEmXeque(cor);
                             DesfazerMovimento(origem, destino, pecaCapturada);
                             if (!testeXeque)
@@ -355,7 +360,7 @@ namespace ConsoleChessGame.Game
 
         public static void ColocarNovaPeca(char coluna, int linha, Piece peca)
         {
-            Board.ColocarPeca(peca, new PositionOnGame(coluna, linha).ConvertToPositionOnBoard());
+            Board.PutPiece(peca, new PositionOnGame(coluna, linha).ConvertToPositionOnBoard());
             Pieces.Add(peca);
         }
 

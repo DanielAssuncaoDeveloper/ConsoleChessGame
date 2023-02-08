@@ -33,56 +33,56 @@ namespace ConsoleChessGame.Game.Pieces
 
             // norte
             pos.DefinirValores(Position.Linha - 1, Position.Coluna);
-            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // nordeste
             pos.DefinirValores(Position.Linha - 1, Position.Coluna + 1);
-            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // oeste
             pos.DefinirValores(Position.Linha, Position.Coluna + 1);
-            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // sudeste
             pos.DefinirValores(Position.Linha + 1, Position.Coluna + 1);
-            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // sul 
             pos.DefinirValores(Position.Linha + 1, Position.Coluna);
-            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // suldoeste
             pos.DefinirValores(Position.Linha + 1, Position.Coluna - 1);
-            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // leste
             pos.DefinirValores(Position.Linha, Position.Coluna - 1);
-            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
             }
 
             // noroeste
             pos.DefinirValores(Position.Linha - 1, Position.Coluna - 1);
-            if (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
             }
 

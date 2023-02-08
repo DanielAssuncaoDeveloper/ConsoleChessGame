@@ -21,11 +21,18 @@ namespace ConsoleChessGame.Game.Pieces.Abstract
             NumberOfMovements = 0;
         }
 
-        public void IncrementarMovimentos()
+        /// <summary>
+        /// Realiza a incrementação de movimentos da peça
+        /// </summary>
+        public void IncreaseMovement()
         {
             NumberOfMovements++;
         }
-        public void DecrementarMovimentos()
+
+        /// <summary>
+        /// Realiza a decrementação de movimentos da peça
+        /// </summary>
+        public void DecrementMovement()
         {
             NumberOfMovements--;
         }
@@ -68,7 +75,5 @@ namespace ConsoleChessGame.Game.Pieces.Abstract
         /// <returns>Uma matriz boleana onde cada elemento <see langword="true"/> indica que a posição é válida e
         /// onde for <see langword="false"/>, indica que sa posição é inválida</returns>
         public abstract bool[,] GetValidMoves();
-
-
     }
 }
