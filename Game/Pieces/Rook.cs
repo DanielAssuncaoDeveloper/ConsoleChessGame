@@ -1,32 +1,35 @@
 ﻿using tabuleiro;
+using ConsoleChessGame.Game.Enum;
+using ConsoleChessGame.Game.Pieces.Abstract;
 
-namespace Xadrez_Console.Game.Pieces
+namespace ConsoleChessGame.Game.Pieces
 {
     class Rook : Piece
     {
-        public Rook(Color cor, Board tab)
-            : base(cor, tab) { }
+        public Rook(Color color, BoardService board) 
+            : base(color, board) 
+        { }
 
         public override string ToString()
         {
             return "T";
         }
 
-        public bool MovimentoPossivel(PositionBoard pos)
+        public bool MovimentoPossivel(PositionOnBoard pos)
         {
             Piece p = Board.GetPiece(pos);
             return p == null || p.Color != Color;
         }
 
-        public override bool[,] MovimentosValidos()
+        public override bool[,] GetValidMoves()
         {
             bool[,] movPosiveis = new bool[Board.Linhas, Board.Colunas];
 
-            PositionBoard pos = new PositionBoard(0, 0);
+            PositionOnBoard pos = new PositionOnBoard(0, 0);
 
             // norte
             pos.DefinirValores(Position.Linha - 1, Position.Coluna);
-            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
@@ -39,7 +42,7 @@ namespace Xadrez_Console.Game.Pieces
 
             // oeste
             pos.DefinirValores(Position.Linha, Position.Coluna + 1);
-            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
@@ -52,7 +55,7 @@ namespace Xadrez_Console.Game.Pieces
 
             // sul
             pos.DefinirValores(Position.Linha + 1, Position.Coluna);
-            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
@@ -64,7 +67,7 @@ namespace Xadrez_Console.Game.Pieces
             }
 
             pos.DefinirValores(Position.Linha, Position.Coluna - 1);
-            while (Board.PosicaoValida(pos) && MovimentoPossivel(pos))
+            while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
                 movPosiveis[pos.Linha, pos.Coluna] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)

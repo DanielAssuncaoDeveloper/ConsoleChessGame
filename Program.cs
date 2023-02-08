@@ -1,8 +1,9 @@
 ﻿using System;
 using tabuleiro;
-using Xadrez_Console.Game;
+using ConsoleChessGame.Board.Exception;
+using ConsoleChessGame.Game;
 
-namespace Xadrez_Console
+namespace ConsoleChessGame
 {
     class Program
     {
@@ -10,32 +11,30 @@ namespace Xadrez_Console
         {
             try
             {
-                GameService game = new GameService();
-
-                while (!game.jogoFinalizado)
+                while (!GameService.FinishedGame)
                 {
                     try
                     {
                         Console.Clear();
-                        Screen.PrintGame(game);
+                        Screen.PrintGame();
 
                         // Lendo posição de origem para iniciar a jogada
                         Console.Write("Origem: ");
-                        PositionBoard origem = Screen.ReadPosition();
+                        PositionOnBoard origin = Screen.ReadPosition();
 
-                        game.ValidateOriginPosition(origem);
+                        GameService.ValidateOriginPosition(origin); // IM STOPPED HERE
 
-                        bool[,] possicoesPossiveis = game.Board.GetPiece(origem).MovimentosValidos();
+                        bool[,] possicoesPossiveis = GameService.Board.GetPiece(origin).GetValidMoves();
                         Console.Clear();
-                        Screen.ImprimirTabuleiro(game.Board, possicoesPossiveis);
+                        Screen.ImprimirTabuleiro(GameService.Board, possicoesPossiveis);
 
                         Console.WriteLine();
                         Console.Write("Destino: ");
-                        PositionBoard destino = Screen.ReadPosition();
-                        game.ValidarPosicaoDestino(origem, destino);
+                        PositionOnBoard destino = Screen.ReadPosition();
+                        GameService.ValidateDestinationPosition(origin, destino);
 
                         Console.WriteLine(destino);
-                        game.RealizarJogada(origem, destino);
+                        GameService.RealizarJogada(origin, destino);
                     }
                     catch (ExceptionBoard e)
                     {

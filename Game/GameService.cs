@@ -1,69 +1,90 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using tabuleiro;
-using Xadrez_Console.Game.Pieces;
+using ConsoleChessGame.Board.Exception;
+using ConsoleChessGame.Game.Enum;
+using ConsoleChessGame.Game.Pieces;
+using ConsoleChessGame.Game.Pieces.Abstract;
 
-namespace Xadrez_Console.Game
+namespace ConsoleChessGame.Game
 {
-    class GameService
+    static class GameService
     {
-        public Board Board { get; private set; }
-        public Color CurrentPlayerColor { get; private set; }
-        public int turno { get; private set; }
-        public bool jogoFinalizado { get; set; }
-        public bool xeque { get; set; }
-        private HashSet<Piece> pecas;
-        private HashSet<Piece> capturadas;
-        public Piece vulneravelEnPassant;
+        public static BoardService Board { get; private set; }
+        public static Color CurrentPlayerColor { get; private set; }
+        public static int Turn { get; private set; }
+        public static bool FinishedGame { get; set; }
+        public static bool IsCheck { get; set; }
+        public static Piece VulnerablePiecesForEnPassant;
 
-        public GameService()
+        private static HashSet<Piece> Pieces;
+        private static HashSet<Piece> CapturedPieces;
+
+        static GameService()
         {
-            Board = new Board(8, 8);
-            CurrentPlayerColor = Color.Branca;
-            turno = 1;
-            jogoFinalizado = false;
-            pecas = new HashSet<Piece>();
-            capturadas = new HashSet<Piece>();
-            ColocarPecasIniciais();
-            vulneravelEnPassant = null;
+            Board = new BoardService(8, 8);
+            CurrentPlayerColor = Color.White;
+            Turn = 1;
+            FinishedGame = false;
+            Pieces = new HashSet<Piece>();
+            CapturedPieces = new HashSet<Piece>();
+            VulnerablePiecesForEnPassant = null;
+
+            InitializePieces();
         }
 
-        public void IncrementarMovimentos()
+        /// <summary>
+        /// Realiza incrementação na propriedade <see langword="Turn"/>
+        /// </summary>
+        private static void PassTurn()
         {
-            turno++;
+            Turn++;
         }
 
         /// <summary>
         /// Verifica se a posição de origem informada pelo jogador é válida
         /// </summary>
         /// <param name="position">Posição no tabuleiro informada pelo jogador</param>
-        public void ValidateOriginPosition(PositionBoard position)
+        public static void ValidateOriginPosition(PositionOnBoard position)
         {
-            if (Board.GetPiece(position) is null)
-                throw new ExceptionBoard("Não existe peça na posição de origem escolhida!");
+            var piece = Board.GetPiece(position);
 
-            if (Board.GetPiece(position).Color != CurrentPlayerColor)
+            if (piece is null)
+                throw new ExceptionBoard("A posição escolhida não corresponde a nenhuma peça!");
+
+            if (piece.Color != CurrentPlayerColor)
                 throw new ExceptionBoard("A peça de origem escolhida não é sua!");
 
-            if (!Board.GetPiece(position).ExisteMovimentosPossiveis()) // IM STOPPED HERE
+            if (!piece.ExistsPossibleMoves()) 
                 throw new ExceptionBoard("Não existe movimentos possíveis para a peça de origem escolhida!");
         }
 
-        private Color Adversaria(Color cor)
+        /// <summary>
+        /// Retorna a cor adversária com base na cor enviada por parâmetro
+        /// </summary>
+        /// <param name="color">Cor que deseja saber a adversária</param>
+        private static Color GetOpponentColor(Color color)
         {
-            if (cor == Color.Branca)
-            {
-                return Color.Preta;
-            }
-            return Color.Branca;
+            var colorReturn = Color.White;
+
+            if (color == Color.White)
+                colorReturn = Color.Red;
+
+            return colorReturn;
         }
 
-        public void ValidarPosicaoDestino(PositionBoard origem, PositionBoard destino)
+        /// <summary>
+        /// Verifica se a posição de destino escolhida para uma peça é válida
+        /// </summary>
+        /// <param name="originPosition">Posição de origem da peça</param>
+        /// <param name="destinyPosition">Posição de destino da peça</param>
+        public static void ValidateDestinationPosition(PositionOnBoard originPosition, PositionOnBoard destinyPosition)
         {
-            if (!Board.GetPiece(origem).PodeMoverPara(destino))
+            var piece = Board.GetPiece(originPosition);
+
+            if (!piece.CanMoveTo(destinyPosition))
             {
-                throw new ExceptionBoard("Posição de Destino invalida");
+                throw new ExceptionBoard("Não é possível mover a peça para a posição informada.");
             }
         }
 
@@ -71,107 +92,118 @@ namespace Xadrez_Console.Game
         /// Obtem as peças capturadas na partida de uma determinada cor
         /// </summary>
         /// <param name="color">Cor das peças a serem obtidas</param>
-        public HashSet<Piece> CapturedPieces(Color color) =>
-            capturadas
+        public static HashSet<Piece> GetCapturedPieces(Color color) =>
+            CapturedPieces
                 .Where(p => p.Color.Equals(color))
                 .ToHashSet();
             
-        public HashSet<Piece> PecasEmJogo(Color cor)
+        /// <summary>
+        /// Obtem as peças que ainda estão no jogo de uma determinada cor
+        /// </summary>
+        /// <param name="color">Cor referente as peças que deseja obter</param>
+        public static HashSet<Piece> GetPiecesInGame(Color color)
         {
-            HashSet<Piece> aux = new HashSet<Piece>();
-            foreach (Piece p in pecas)
-            {
-                if (p.Color == cor)
-                {
-                    aux.Add(p);
-                }
-            }
-            aux.ExceptWith(CapturedPieces(cor));
-            return aux;
+            // Consultando as peças da cor informada por parâmetro
+            var piecesInGame = Pieces
+                    .Where(p => p.Color.Equals(color))
+                    .ToHashSet();
+
+            // Removendo peças que já tenham sido capturadas
+            piecesInGame.ExceptWith(
+                    GetCapturedPieces(color)
+                );
+
+            return piecesInGame;
         }
 
-        public Piece ExecutarMovimento(PositionBoard posInicial, PositionBoard posFinal)
+        /// <summary>
+        /// Realiza uma jogada com base nas posições informadas
+        /// </summary>
+        /// <param name="initialPosition">Posição inicial da peça que deseja realizar o movimento</param>
+        /// <param name="finalPosition">Posição final da peça escolhida</param>
+        /// <returns>Uma instância de <see langword="Piece"/> da a peça movimentada</returns>
+        public static Piece MakeAPlay(PositionOnBoard initialPosition, PositionOnBoard finalPosition)
         {
-            Piece pecaMovimentada = Board.TirarPeca(posInicial);
-            pecaMovimentada.IncrementarMovimentos();
-            Piece pecaMorta = Board.TirarPeca(posFinal);
-            Board.ColocarPeca(pecaMovimentada, posFinal);
-            if (pecaMorta != null)
-            {
-                capturadas.Add(pecaMorta);
-            }
+            Piece movimentedPiece = Board.RemovePiece(initialPosition);
+            movimentedPiece.IncreaseMovement();
+
+            Piece capturedPiece = Board.RemovePiece(finalPosition);
+            Board.PutPiece(movimentedPiece, finalPosition);
+
+            if (capturedPiece is not null)
+                CapturedPieces.Add(capturedPiece); // STOPPED HERE
 
             // Jogada Especial: Roque Pequeno
-            if (pecaMovimentada is King && posFinal.Coluna == posInicial.Coluna + 2)
+            if (movimentedPiece is King && finalPosition.Coluna == initialPosition.Coluna + 2)
             {
-                PositionBoard posTorre = new PositionBoard(posInicial.Linha, posInicial.Coluna + 3);
-                PositionBoard destinoTorre = new PositionBoard(posInicial.Linha, posInicial.Coluna + 1);
-                Piece torre = Board.TirarPeca(posTorre);
-                torre.IncrementarMovimentos();
-                Board.ColocarPeca(torre, destinoTorre);
+                PositionOnBoard posTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 3);
+                PositionOnBoard destinoTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 1);
+                Piece torre = Board.RemovePiece(posTorre);
+                torre.IncreaseMovement();
+                Board.PutPiece(torre, destinoTorre);
             }
             // Jogada Especial: Roque Grande
-            if (pecaMovimentada is King && posFinal.Coluna == posInicial.Coluna - 2)
+            if (movimentedPiece is King && finalPosition.Coluna == initialPosition.Coluna - 2)
             {
-                PositionBoard posTorre = new PositionBoard(posInicial.Linha, posInicial.Coluna - 4);
-                PositionBoard destinoTorre = new PositionBoard(posInicial.Linha, posInicial.Coluna - 1);
-                Piece torre = Board.TirarPeca(posTorre);
-                torre.IncrementarMovimentos();
-                Board.ColocarPeca(torre, destinoTorre);
+                PositionOnBoard posTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 4);
+                PositionOnBoard destinoTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 1);
+                Piece torre = Board.RemovePiece(posTorre);
+                torre.IncreaseMovement();
+                Board.PutPiece(torre, destinoTorre);
             }
 
             // Jogada Especial: En Passant
-            if (pecaMovimentada is Pawn)
+            if (movimentedPiece is Pawn)
             {
-                if (posFinal.Coluna != posInicial.Coluna &&
-                    pecaMorta == null)
+                if (finalPosition.Coluna != initialPosition.Coluna &&
+                    capturedPiece == null)
                 {
-                    PositionBoard posP;
-                    if (pecaMovimentada.Color == Color.Branca)
+                    PositionOnBoard posP;
+                    if (movimentedPiece.Color == Color.White)
                     {
-                        posP = new PositionBoard(posFinal.Linha + 1, posFinal.Coluna);
+                        posP = new PositionOnBoard(finalPosition.Linha + 1, finalPosition.Coluna);
                     }
                     else
                     {
-                        posP = new PositionBoard(posFinal.Linha - 1, posFinal.Coluna);
+                        posP = new PositionOnBoard(finalPosition.Linha - 1, finalPosition.Coluna);
                     }
-                    pecaMorta = Board.TirarPeca(posP);
-                    capturadas.Add(pecaMorta);
+                    capturedPiece = Board.RemovePiece(posP);
+                    CapturedPieces.Add(capturedPiece);
                 }
             }
 
-            return pecaMorta;
+            return capturedPiece;
         }
 
-        public void DesfazerMovimento(PositionBoard posInicial, PositionBoard posFinal, Piece pecaCapturada)
+        public void DesfazerMovimento(PositionOnBoard posInicial, PositionOnBoard posFinal, Piece pecaCapturada)
         {
-            Piece p = Board.TirarPeca(posFinal);
-            p.DecrementarMovimentos();
+            Piece p = Board.RemovePiece(posFinal);
+            p.DecrementMovement();
             if (pecaCapturada != null)
             {
-                Board.ColocarPeca(pecaCapturada, posFinal);
-                capturadas.Remove(p);
+                Board.PutPiece(pecaCapturada, posFinal);
+                CapturedPieces.Remove(p);
             }
-            Board.ColocarPeca(p, posInicial);
+            Board.PutPiece(p, posInicial);
 
             // Jogada Especial: Roque Pequeno
             if (p is King && posInicial.Coluna + 2 == posFinal.Coluna)
             {
-                PositionBoard posTorre = new PositionBoard(posInicial.Linha, posInicial.Coluna + 3);
-                PositionBoard destinoTorre = new PositionBoard(posInicial.Linha, posInicial.Coluna + 1);
-                Piece torre = Board.TirarPeca(destinoTorre);
-                torre.IncrementarMovimentos();
-                Board.ColocarPeca(torre, posTorre);
+                PositionOnBoard posTorre = new PositionOnBoard(posInicial.Linha, posInicial.Coluna + 3);
+                PositionOnBoard destinoTorre = new PositionOnBoard(posInicial.Linha, posInicial.Coluna + 1);
+                Piece torre = Board.RemovePiece(destinoTorre);
+                torre.IncreaseMovement();
+                Board.PutPiece(torre, posTorre);
             }
 
             // Jogada Especial: Roque Grande
             if (p is King && posInicial.Coluna - 2 == posFinal.Coluna)
             {
-                PositionBoard posTorre = new PositionBoard(posInicial.Linha, posInicial.Coluna - 4);
-                PositionBoard destinoTorre = new PositionBoard(posInicial.Linha, posInicial.Coluna - 1);
-                Piece torre = Board.TirarPeca(destinoTorre);
-                torre.IncrementarMovimentos();
-                Board.ColocarPeca(torre, posTorre);
+                PositionOnBoard posTorre = new PositionOnBoard(posInicial.Linha, posInicial.Coluna - 4);
+                PositionOnBoard destinoTorre = new PositionOnBoard(posInicial.Linha, posInicial.Coluna - 1);
+                Piece torre = Board.RemovePiece(destinoTorre);
+                torre.IncreaseMovement();
+                Board.PutPiece(torre, posTorre);
             }
 
 
@@ -179,27 +211,27 @@ namespace Xadrez_Console.Game
             if (p is Pawn)
             {
                 if (posFinal.Coluna != posInicial.Coluna &&
-                    pecaCapturada == vulneravelEnPassant)
+                    pecaCapturada == VulnerablePiecesForEnPassant)
                 {
-                    Piece peao = Board.TirarPeca(posFinal);
-                    PositionBoard posP;
-                    if (p.Color == Color.Branca)
+                    Piece peao = Board.RemovePiece(posFinal);
+                    PositionOnBoard posP;
+                    if (p.Color == Color.White)
                     {
-                        posP = new PositionBoard(3, posFinal.Coluna);
+                        posP = new PositionOnBoard(3, posFinal.Coluna);
                     }
                     else
                     {
-                        posP = new PositionBoard(4, posFinal.Coluna);
+                        posP = new PositionOnBoard(4, posFinal.Coluna);
                     }
-                    Board.ColocarPeca(peao, posP);
+                    Board.PutPiece(peao, posP);
                 }
             }
 
         }
 
-        public void RealizarJogada(PositionBoard posInicial, PositionBoard posFinal)
+        public void RealizarJogada(PositionOnBoard posInicial, PositionOnBoard posFinal)
         {
-            Piece pecaMorta = ExecutarMovimento(posInicial, posFinal);
+            Piece pecaMorta = MakeAPlay(posInicial, posFinal);
             if (EstaEmXeque(CurrentPlayerColor))
             {
                 DesfazerMovimento(posInicial, posFinal, pecaMorta);
@@ -209,35 +241,35 @@ namespace Xadrez_Console.Game
             // Jogada Especial: Promoção
             if (possivelEnPassant is Pawn)
             {
-                if (possivelEnPassant.Color == Color.Branca && posFinal.Linha == 0 ||
-                    possivelEnPassant.Color == Color.Preta && posFinal.Linha == 7)
+                if (possivelEnPassant.Color == Color.White && posFinal.Linha == 0 ||
+                    possivelEnPassant.Color == Color.Red && posFinal.Linha == 7)
                 {
-                    possivelEnPassant = Board.TirarPeca(posFinal);
-                    pecas.Remove(possivelEnPassant);
+                    possivelEnPassant = Board.RemovePiece(posFinal);
+                    Pieces.Remove(possivelEnPassant);
                     Piece dama = new Queen(possivelEnPassant.Color, Board);
-                    Board.ColocarPeca(dama, posFinal);
-                    pecas.Add(dama);
+                    Board.PutPiece(dama, posFinal);
+                    Pieces.Add(dama);
                 }
             }
 
 
 
-            if (EstaEmXeque(Adversaria(CurrentPlayerColor)))
+            if (EstaEmXeque(GetOpponentColor(CurrentPlayerColor)))
             {
-                xeque = true;
+                IsCheck = true;
             }
             else
             {
-                xeque = false;
+                IsCheck = false;
             }
 
-            if (TesteXequeMate(Adversaria(CurrentPlayerColor)))
+            if (TesteXequeMate(GetOpponentColor(CurrentPlayerColor)))
             {
-                jogoFinalizado = true;
+                FinishedGame = true;
             }
             else
             {
-                IncrementarMovimentos();
+                PassTurn();
                 MudarJogador();
             }
 
@@ -246,21 +278,21 @@ namespace Xadrez_Console.Game
                 (posFinal.Linha - 2 == posInicial.Linha ||
                  posFinal.Linha + 2 == posInicial.Linha))
             {
-                vulneravelEnPassant = possivelEnPassant;
+                VulnerablePiecesForEnPassant = possivelEnPassant;
             }
             else
             {
-                vulneravelEnPassant = null;
+                VulnerablePiecesForEnPassant = null;
             }
         }
 
         public bool EstaEmXeque(Color cor)
         {
 
-            PositionBoard posicaoRei = FindRei(cor).Position;
-            foreach (Piece p in PecasEmJogo(Adversaria(cor)))
+            PositionOnBoard posicaoRei = FindRei(cor).Position;
+            foreach (Piece p in GetPiecesInGame(GetOpponentColor(cor)))
             {
-                if (p.MovimentosValidos()[posicaoRei.Linha, posicaoRei.Coluna])
+                if (p.GetValidMoves()[posicaoRei.Linha, posicaoRei.Coluna])
                 {
                     return true;
                 }
@@ -275,19 +307,19 @@ namespace Xadrez_Console.Game
                 return false;
             }
 
-            foreach (Piece p in PecasEmJogo(cor))
+            foreach (Piece p in GetPiecesInGame(cor))
             {
-                bool[,] movPossiveis = p.MovimentosValidos();
+                bool[,] movPossiveis = p.GetValidMoves();
                 for (int i = 0; i < Board.Linhas; i++)
                 {
                     for (int j = 0; j < Board.Colunas; j++)
                     {
                         if (movPossiveis[i, j])
                         {
-                            PositionBoard destino = new PositionBoard(i, j);
-                            PositionBoard origem = p.Position;
+                            PositionOnBoard destino = new PositionOnBoard(i, j);
+                            PositionOnBoard origem = p.Position;
 
-                            Piece pecaCapturada = ExecutarMovimento(origem, destino);
+                            Piece pecaCapturada = MakeAPlay(origem, destino);
                             bool testeXeque = EstaEmXeque(cor);
                             DesfazerMovimento(origem, destino, pecaCapturada);
                             if (!testeXeque)
@@ -304,7 +336,7 @@ namespace Xadrez_Console.Game
 
         private Piece FindRei(Color cor)
         {
-            foreach (Piece p in PecasEmJogo(cor))
+            foreach (Piece p in GetPiecesInGame(cor))
             {
                 if (p is King)
                 {
@@ -316,58 +348,63 @@ namespace Xadrez_Console.Game
 
         public void MudarJogador()
         {
-            if (CurrentPlayerColor == Color.Branca)
+            if (CurrentPlayerColor == Color.White)
             {
-                CurrentPlayerColor = Color.Preta;
+                CurrentPlayerColor = Color.Red;
             }
             else
             {
-                CurrentPlayerColor = Color.Branca;
+                CurrentPlayerColor = Color.White;
             }
         }
 
-        public void ColocarNovaPeca(char coluna, int linha, Piece peca)
+        public static void ColocarNovaPeca(char coluna, int linha, Piece peca)
         {
-            Board.ColocarPeca(peca, new PositionChess(coluna, linha).ConvertToPositionBoard());
-            pecas.Add(peca);
+            Board.PutPiece(peca, new PositionOnGame(coluna, linha).ConvertToPositionOnBoard());
+            Pieces.Add(peca);
         }
 
-        private void ColocarPecasIniciais()
+        /// <summary>
+        /// Inicializa as peças do jogo, colocando cada peça em sua respectiva posição
+        /// e respectiva cor
+        /// </summary>
+        private static void InitializePieces()
         {
-            ColocarNovaPeca('a', 1, new Rook(Color.Branca, Board));
-            ColocarNovaPeca('h', 1, new Rook(Color.Branca, Board));
-            ColocarNovaPeca('e', 1, new King(Color.Branca, Board, this));
-            ColocarNovaPeca('d', 1, new Queen(Color.Branca, Board));
-            ColocarNovaPeca('b', 1, new Horse(Color.Branca, Board));
-            ColocarNovaPeca('g', 1, new Horse(Color.Branca, Board));
-            ColocarNovaPeca('f', 1, new Bishop(Color.Branca, Board));
-            ColocarNovaPeca('c', 1, new Bishop(Color.Branca, Board));
-            ColocarNovaPeca('a', 2, new Pawn(Color.Branca, Board, this));
-            ColocarNovaPeca('h', 2, new Pawn(Color.Branca, Board, this));
-            ColocarNovaPeca('e', 2, new Pawn(Color.Branca, Board, this));
-            ColocarNovaPeca('d', 2, new Pawn(Color.Branca, Board, this));
-            ColocarNovaPeca('b', 2, new Pawn(Color.Branca, Board, this));
-            ColocarNovaPeca('g', 2, new Pawn(Color.Branca, Board, this));
-            ColocarNovaPeca('f', 2, new Pawn(Color.Branca, Board, this));
-            ColocarNovaPeca('c', 2, new Pawn(Color.Branca, Board, this));
+            // todo: Refatorar cada peça
+            ColocarNovaPeca('a', 1, new Rook(Color.White, Board));
+            ColocarNovaPeca('h', 1, new Rook(Color.White, Board));
+            ColocarNovaPeca('e', 1, new King(Color.White, Board, this));
+            ColocarNovaPeca('d', 1, new Queen(Color.White, Board));
+            ColocarNovaPeca('b', 1, new Horse(Color.White, Board));
+            ColocarNovaPeca('g', 1, new Horse(Color.White, Board));
+            ColocarNovaPeca('f', 1, new Bishop(Color.White, Board));
+            ColocarNovaPeca('c', 1, new Bishop(Color.White, Board));
+            ColocarNovaPeca('a', 2, new Pawn(Color.White, Board, this));
+            ColocarNovaPeca('h', 2, new Pawn(Color.White, Board, this));
+            ColocarNovaPeca('e', 2, new Pawn(Color.White, Board, this));
+            ColocarNovaPeca('d', 2, new Pawn(Color.White, Board, this));
+            ColocarNovaPeca('b', 2, new Pawn(Color.White, Board, this));
+            ColocarNovaPeca('g', 2, new Pawn(Color.White, Board, this));
+            ColocarNovaPeca('f', 2, new Pawn(Color.White, Board, this));
+            ColocarNovaPeca('c', 2, new Pawn(Color.White, Board, this));
 
 
-            ColocarNovaPeca('a', 8, new Rook(Color.Preta, Board));
-            ColocarNovaPeca('h', 8, new Rook(Color.Preta, Board));
-            ColocarNovaPeca('e', 8, new King(Color.Preta, Board, this));
-            ColocarNovaPeca('d', 8, new Queen(Color.Preta, Board));
-            ColocarNovaPeca('b', 8, new Horse(Color.Preta, Board));
-            ColocarNovaPeca('g', 8, new Horse(Color.Preta, Board));
-            ColocarNovaPeca('f', 8, new Bishop(Color.Preta, Board));
-            ColocarNovaPeca('c', 8, new Bishop(Color.Preta, Board));
-            ColocarNovaPeca('a', 7, new Pawn(Color.Preta, Board, this));
-            ColocarNovaPeca('h', 7, new Pawn(Color.Preta, Board, this));
-            ColocarNovaPeca('e', 7, new Pawn(Color.Preta, Board, this));
-            ColocarNovaPeca('d', 7, new Pawn(Color.Preta, Board, this));
-            ColocarNovaPeca('b', 7, new Pawn(Color.Preta, Board, this));
-            ColocarNovaPeca('g', 7, new Pawn(Color.Preta, Board, this));
-            ColocarNovaPeca('f', 7, new Pawn(Color.Preta, Board, this));
-            ColocarNovaPeca('c', 7, new Pawn(Color.Preta, Board, this));
+            ColocarNovaPeca('a', 8, new Rook(Color.Red, Board));
+            ColocarNovaPeca('h', 8, new Rook(Color.Red, Board));
+            ColocarNovaPeca('e', 8, new King(Color.Red, Board, this));
+            ColocarNovaPeca('d', 8, new Queen(Color.Red, Board));
+            ColocarNovaPeca('b', 8, new Horse(Color.Red, Board));
+            ColocarNovaPeca('g', 8, new Horse(Color.Red, Board));
+            ColocarNovaPeca('f', 8, new Bishop(Color.Red, Board));
+            ColocarNovaPeca('c', 8, new Bishop(Color.Red, Board));
+            ColocarNovaPeca('a', 7, new Pawn(Color.Red, Board, this));
+            ColocarNovaPeca('h', 7, new Pawn(Color.Red, Board, this));
+            ColocarNovaPeca('e', 7, new Pawn(Color.Red, Board, this));
+            ColocarNovaPeca('d', 7, new Pawn(Color.Red, Board, this));
+            ColocarNovaPeca('b', 7, new Pawn(Color.Red, Board, this));
+            ColocarNovaPeca('g', 7, new Pawn(Color.Red, Board, this));
+            ColocarNovaPeca('f', 7, new Pawn(Color.Red, Board, this));
+            ColocarNovaPeca('c', 7, new Pawn(Color.Red, Board, this));
 
         }
 

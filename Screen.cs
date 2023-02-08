@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using tabuleiro;
-using Xadrez_Console.Game;
+using ConsoleChessGame.Game;
+using ConsoleChessGame.Game.Enum;
+using ConsoleChessGame.Game.Pieces.Abstract;
 
-namespace Xadrez_Console
+namespace ConsoleChessGame
 {
     class Screen
     {
@@ -24,13 +26,13 @@ namespace Xadrez_Console
             Console.WriteLine();
 
             // Imprimindo turno atual
-            Console.WriteLine($"Turno: {game.turno}");
+            Console.WriteLine($"Turno: {game.Turn}");
 
-            if (!game.jogoFinalizado)
+            if (!game.FinishedGame)
             {
                 Console.WriteLine($"Aguardando jogada da peça: {game.CurrentPlayerColor}");
 
-                if (game.xeque)
+                if (game.IsCheck)
                 {
                     Console.WriteLine("XEQUE!");
                 }
@@ -53,7 +55,7 @@ namespace Xadrez_Console
             // Imprimindo peças Brancas capturadas
             Console.Write("Brancas: ");
 
-            var capturedWhitePieces = partida.CapturedPieces(Color.Branca);
+            var capturedWhitePieces = partida.GetCapturedPieces(Color.White);
             PrintCapturedGroup(capturedWhitePieces);
             Console.WriteLine();
             
@@ -62,7 +64,7 @@ namespace Xadrez_Console
 
             // Imprimindo peças Vermelhas
             Console.Write("Vermelhas: ");
-            PrintCapturedGroup(partida.CapturedPieces(Color.Preta));
+            PrintCapturedGroup(partida.GetCapturedPieces(Color.Red));
 
             Console.ForegroundColor = colorDefault;
             Console.WriteLine();
@@ -89,7 +91,7 @@ namespace Xadrez_Console
         /// Imprime o tabuleiro (juntamente com as peças e cordenadas)
         /// </summary>
         /// <param name="board">Tabuleiro a ser utilizado para a impressão</param>
-        public static void PrintBoard(Board board)
+        public static void PrintBoard(tabuleiro.BoardService board)
         {
             for (int row = 0; row < board.Linhas; row++)
             {
@@ -111,7 +113,7 @@ namespace Xadrez_Console
             Console.WriteLine();
             Console.WriteLine("     a b c d e f g h");
         }
-        public static void ImprimirTabuleiro(Board tab, bool[,] movimentosPossiveis)
+        public static void ImprimirTabuleiro(tabuleiro.BoardService tab, bool[,] movimentosPossiveis)
         {
             ConsoleColor fundoOriginal = Console.BackgroundColor;
             ConsoleColor fundoAlterado = ConsoleColor.DarkGray;
@@ -143,15 +145,15 @@ namespace Xadrez_Console
         /// Lê uma posição informada pelo jogador
         /// </summary>
         /// <returns></returns>
-        public static PositionBoard ReadPosition()
+        public static PositionOnBoard ReadPosition()
         {
             string positionInputed = Console.ReadLine().ToLower();
 
             char column = positionInputed[0];
             int row = int.Parse(positionInputed[1].ToString());
 
-            var positionChess = new PositionChess(column, row);
-            return positionChess.ConvertToPositionBoard();
+            var positionChess = new PositionOnGame(column, row);
+            return positionChess.ConvertToPositionOnBoard();
         }
 
         /// <summary>
@@ -168,7 +170,7 @@ namespace Xadrez_Console
             else
             {
                 // Imprimindo a peça de acordo com sua cor
-                if (piece.Color == Color.Branca)
+                if (piece.Color == Color.White)
                 {
                     Console.Write(piece);
                 }

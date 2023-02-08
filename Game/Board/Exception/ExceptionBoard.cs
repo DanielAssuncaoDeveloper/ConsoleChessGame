@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace tabuleiro
+namespace ConsoleChessGame.Board.Exception
 {
     class ExceptionBoard : ApplicationException
     {

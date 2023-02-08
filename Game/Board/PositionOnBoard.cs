@@ -1,14 +1,14 @@
 ﻿namespace tabuleiro
 {
     /// <summary>
-    /// Representa as posições da matriz do tabuleiro (0-7/0-7)
+    /// Representa a posição em uma matriz referente ao tabuleiro de 8/8
     /// </summary>
-    class PositionBoard
+    class PositionOnBoard
     {
         public int Linha { get; set; }
         public int Coluna { get; set; }
 
-        public PositionBoard(int linha, int coluna)
+        public PositionOnBoard(int linha, int coluna)
         {
             Linha = linha;
             Coluna = coluna;
