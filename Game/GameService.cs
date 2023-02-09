@@ -5,6 +5,7 @@ using ConsoleChessGame.Board.Exception;
 using ConsoleChessGame.Game.Enum;
 using ConsoleChessGame.Game.Pieces;
 using ConsoleChessGame.Game.Pieces.Abstract;
+using Xadrez_Console.Game.Pieces;
 
 namespace ConsoleChessGame.Game
 {
@@ -131,17 +132,12 @@ namespace ConsoleChessGame.Game
             Board.PutPiece(movimentedPiece, finalPosition);
 
             if (capturedPiece is not null)
-                CapturedPieces.Add(capturedPiece); // STOPPED HERE
+                CapturedPieces.Add(capturedPiece);
 
-            // Jogada Especial: Roque Pequeno
+            // Verificando se a jogada realizada é um Roque Pequeno
             if (movimentedPiece is King && finalPosition.Coluna == initialPosition.Coluna + 2)
-            {
-                PositionOnBoard posTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 3);
-                PositionOnBoard destinoTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 1);
-                Piece torre = Board.RemovePiece(posTorre);
-                torre.IncreaseMovement();
-                Board.PutPiece(torre, destinoTorre);
-            }
+                SmallCastling(initialPosition); // STOPPED HERE
+
             // Jogada Especial: Roque Grande
             if (movimentedPiece is King && finalPosition.Coluna == initialPosition.Coluna - 2)
             {
@@ -174,6 +170,7 @@ namespace ConsoleChessGame.Game
 
             return capturedPiece;
         }
+
 
         public void DesfazerMovimento(PositionOnBoard posInicial, PositionOnBoard posFinal, Piece pecaCapturada)
         {
@@ -408,5 +405,19 @@ namespace ConsoleChessGame.Game
 
         }
 
+        /// <summary>
+        /// Realiza a jogada do Roque pequeno
+        /// </summary>
+        /// <param name="initialPosition">Posição inicial da jogada</param>
+        private static void SmallCastling(PositionOnBoard initialPosition)
+        {
+            PositionOnBoard rookPosition = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 3);
+            PositionOnBoard rookDestiny = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 1);
+
+            Piece rook = Board.RemovePiece(rookPosition);
+            rook.IncreaseMovement();
+
+            Board.PutPiece(rook, rookDestiny);
+        }
     }
 }
