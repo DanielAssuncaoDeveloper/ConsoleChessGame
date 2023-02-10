@@ -136,41 +136,23 @@ namespace ConsoleChessGame.Game
 
             // Verificando se a jogada realizada é um Roque Pequeno
             if (movimentedPiece is King && finalPosition.Coluna == initialPosition.Coluna + 2)
-                SmallCastling(initialPosition); // STOPPED HERE
+                MakeASmallCastling(initialPosition);
 
-            // Jogada Especial: Roque Grande
+            // Verificando se a jogada realizada é um Roque Grande
             if (movimentedPiece is King && finalPosition.Coluna == initialPosition.Coluna - 2)
-            {
-                PositionOnBoard posTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 4);
-                PositionOnBoard destinoTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 1);
-                Piece torre = Board.RemovePiece(posTorre);
-                torre.IncreaseMovement();
-                Board.PutPiece(torre, destinoTorre);
-            }
+                MakeABigCastling(initialPosition);
 
-            // Jogada Especial: En Passant
-            if (movimentedPiece is Pawn)
-            {
-                if (finalPosition.Coluna != initialPosition.Coluna &&
-                    capturedPiece == null)
-                {
-                    PositionOnBoard posP;
-                    if (movimentedPiece.Color == Color.White)
-                    {
-                        posP = new PositionOnBoard(finalPosition.Linha + 1, finalPosition.Coluna);
-                    }
-                    else
-                    {
-                        posP = new PositionOnBoard(finalPosition.Linha - 1, finalPosition.Coluna);
-                    }
-                    capturedPiece = Board.RemovePiece(posP);
-                    CapturedPieces.Add(capturedPiece);
-                }
-            }
+            // Verificando se a jogada realizada é um En Passant
+            bool IsNotMovementInSameColumn = finalPosition.Coluna != initialPosition.Coluna;
+            if (
+                    movimentedPiece is Pawn &&
+                    IsNotMovementInSameColumn &&
+                    capturedPiece is null
+                )
+                MakeAEnPassant(movimentedPiece, capturedPiece, finalPosition);
 
-            return capturedPiece;
+            return capturedPiece; // STOPPED HERE
         }
-
 
         public void DesfazerMovimento(PositionOnBoard posInicial, PositionOnBoard posFinal, Piece pecaCapturada)
         {
@@ -406,10 +388,10 @@ namespace ConsoleChessGame.Game
         }
 
         /// <summary>
-        /// Realiza a jogada do Roque pequeno
+        /// Realiza a jogada: Roque pequeno
         /// </summary>
         /// <param name="initialPosition">Posição inicial da jogada</param>
-        private static void SmallCastling(PositionOnBoard initialPosition)
+        private static void MakeASmallCastling(PositionOnBoard initialPosition)
         {
             PositionOnBoard rookPosition = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 3);
             PositionOnBoard rookDestiny = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 1);
@@ -418,6 +400,40 @@ namespace ConsoleChessGame.Game
             rook.IncreaseMovement();
 
             Board.PutPiece(rook, rookDestiny);
+        }
+
+        /// <summary>
+        /// Realiza a jogada: Roque grande
+        /// </summary>
+        /// <param name="initialPosition">Posição inicial da jogada</param>
+        private static void MakeABigCastling(PositionOnBoard initialPosition)
+        {
+            PositionOnBoard posTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 4);
+            PositionOnBoard destinoTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 1);
+
+            Piece torre = Board.RemovePiece(posTorre);
+            torre.IncreaseMovement();
+
+            Board.PutPiece(torre, destinoTorre);
+        }
+
+        /// <summary>
+        /// Realiza a jogada: En Passant
+        /// </summary>
+        /// <param name="movimentedPiece">Instância <see langword="Piece"/> da Peça movimentada</param>
+        /// <param name="capturedPiece">Instância <see langword="Piece"/> da Peça capturada</param>
+        /// <param name="finalPosition">Posição final da jogada</param>
+        private static void MakeAEnPassant(Piece movimentedPiece, Piece capturedPiece, PositionOnBoard finalPosition)
+        {
+            PositionOnBoard positionCapturedPiece;
+
+            if (movimentedPiece.Color == Color.White)
+                positionCapturedPiece = new PositionOnBoard(finalPosition.Linha + 1, finalPosition.Coluna);
+            else
+                positionCapturedPiece = new PositionOnBoard(finalPosition.Linha - 1, finalPosition.Coluna);
+
+            capturedPiece = Board.RemovePiece(positionCapturedPiece);
+            CapturedPieces.Add(capturedPiece);
         }
     }
 }
