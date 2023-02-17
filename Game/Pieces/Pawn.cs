@@ -74,13 +74,13 @@ namespace ConsoleChessGame.Game.Pieces
                 {
                     PositionOnBoard esquerda = new PositionOnBoard(Position.Linha, Position.Coluna - 1);
                     if (Board.IsValidPosition(esquerda) && ExisteInimigo(esquerda) &&
-                        Board.GetPiece(esquerda) == partida.VulnerablePiecesForEnPassant)
+                        Board.GetPiece(esquerda) == partida.VulnerablePieceForEnPassant)
                     {
                         movPosiveis[esquerda.Linha - 1, esquerda.Coluna] = true;
                     }
                     PositionOnBoard direita = new PositionOnBoard(Position.Linha, Position.Coluna + 1);
                     if (Board.IsValidPosition(direita) && ExisteInimigo(direita) &&
-                        Board.GetPiece(direita) == partida.VulnerablePiecesForEnPassant)
+                        Board.GetPiece(direita) == partida.VulnerablePieceForEnPassant)
                     {
                         movPosiveis[direita.Linha - 1, direita.Coluna] = true;
                     }
@@ -127,13 +127,13 @@ namespace ConsoleChessGame.Game.Pieces
             {
                 PositionOnBoard esquerda = new PositionOnBoard(Position.Linha, Position.Coluna - 1);
                 if (Board.IsValidPosition(esquerda) && ExisteInimigo(esquerda) &&
-                    Board.GetPiece(esquerda) == partida.VulnerablePiecesForEnPassant)
+                    Board.GetPiece(esquerda) == partida.VulnerablePieceForEnPassant)
                 {
                     movPosiveis[esquerda.Linha + 1, esquerda.Coluna] = true;
                 }
                 PositionOnBoard direita = new PositionOnBoard(Position.Linha, Position.Coluna + 1);
                 if (Board.IsValidPosition(direita) && ExisteInimigo(direita) &&
-                    Board.GetPiece(direita) == partida.VulnerablePiecesForEnPassant)
+                    Board.GetPiece(direita) == partida.VulnerablePieceForEnPassant)
                 {
                     movPosiveis[direita.Linha + 1, direita.Coluna] = true;
                 }
