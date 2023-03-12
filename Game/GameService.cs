@@ -5,7 +5,6 @@ using ConsoleChessGame.Board.Exception;
 using ConsoleChessGame.Game.Enum;
 using ConsoleChessGame.Game.Pieces;
 using ConsoleChessGame.Game.Pieces.Abstract;
-using Xadrez_Console.Game.Pieces;
 
 namespace ConsoleChessGame.Game
 {
@@ -166,84 +165,56 @@ namespace ConsoleChessGame.Game
 
             if (IsASmallCastling(movimentedPiece, initialPosition, finalPosition))
                 UndoASmallCastling(initialPosition); // todo: Realizar teste para verificar que realmente está funcionando
-            // STOPPED HERE
 
             if (IsABigCastling(movimentedPiece, initialPosition, finalPosition))
-            {
-                PositionOnBoard posTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 4);
-                PositionOnBoard destinoTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 1);
-                Piece torre = Board.RemovePiece(destinoTorre);
-                torre.IncreaseMovement();
-                Board.PutPiece(torre, posTorre);
-            }
+                UndoABigCastling(initialPosition); // todo: Realizar teste para verificar se realmente está funcionando
 
             if (IsAEnPassant(movimentedPiece, capturedPiece, initialPosition, finalPosition))
-            {
-                Piece peao = Board.RemovePiece(finalPosition);
-                PositionOnBoard posP;
-                if (movimentedPiece.Color == Color.White)
-                {
-                    posP = new PositionOnBoard(3, finalPosition.Coluna);
-                }
-                else
-                {
-                    posP = new PositionOnBoard(4, finalPosition.Coluna);
-                }
-                Board.PutPiece(peao, posP);
-            }
+                UndoAEnPassant(finalPosition, movimentedPiece); // todo: Realizar teste para verificar se realmente está funcionando
 
         }
 
-        public void RealizarJogada(PositionOnBoard posInicial, PositionOnBoard posFinal)
+        public static void MakeAPlay(PositionOnBoard initialPosition, PositionOnBoard finalPosition)
         {
-            Piece pecaMorta = MakeAMove(posInicial, posFinal);
-            if (EstaEmXeque(CurrentPlayerColor))
+            Piece capturedPiece = MakeAMove(initialPosition, finalPosition);
+
+            if (IsInCheck(CurrentPlayerColor))
             {
-                UndoAMove(posInicial, posFinal, pecaMorta);
+                UndoAMove(initialPosition, finalPosition, capturedPiece);
                 throw new ExceptionBoard("Você não pode se colocar em xeque!");
             }
-            Piece possivelEnPassant = Board.GetPiece(posFinal);
-            // Jogada Especial: Promoção
-            if (possivelEnPassant is Pawn)
+
+            Piece movimentedPiece = Board.GetPiece(finalPosition);
+
+            IsCheck = IsInCheck(GetOpponentColor(CurrentPlayerColor));
+            FinishedGame = IsInCheckmate(GetOpponentColor(CurrentPlayerColor));
+            
+            if (!FinishedGame)
             {
-                if (possivelEnPassant.Color == Color.White && posFinal.Linha == 0 ||
-                    possivelEnPassant.Color == Color.Red && posFinal.Linha == 7)
+                PassTurn();
+                ChangePlayer();
+            } // STOPPED HERE
+
+            // Jogada Especial: Promoção
+            if (movimentedPiece is Pawn)
+            {
+                if (movimentedPiece.Color == Color.White && finalPosition.Linha == 0 ||
+                    movimentedPiece.Color == Color.Red && finalPosition.Linha == 7)
                 {
-                    possivelEnPassant = Board.RemovePiece(posFinal);
-                    Pieces.Remove(possivelEnPassant);
-                    Piece dama = new Queen(possivelEnPassant.Color, Board);
-                    Board.PutPiece(dama, posFinal);
+                    movimentedPiece = Board.RemovePiece(finalPosition);
+                    Pieces.Remove(movimentedPiece);
+                    Piece dama = new Queen(movimentedPiece.Color, Board);
+                    Board.PutPiece(dama, finalPosition);
                     Pieces.Add(dama);
                 }
             }
 
-
-
-            if (EstaEmXeque(GetOpponentColor(CurrentPlayerColor)))
-            {
-                IsCheck = true;
-            }
-            else
-            {
-                IsCheck = false;
-            }
-
-            if (TesteXequeMate(GetOpponentColor(CurrentPlayerColor)))
-            {
-                FinishedGame = true;
-            }
-            else
-            {
-                PassTurn();
-                MudarJogador();
-            }
-
             // Jogada Especial: En Passant
-            if (possivelEnPassant is Pawn &&
-                (posFinal.Linha - 2 == posInicial.Linha ||
-                 posFinal.Linha + 2 == posInicial.Linha))
+            if (movimentedPiece is Pawn &&
+                (finalPosition.Linha - 2 == initialPosition.Linha ||
+                 finalPosition.Linha + 2 == initialPosition.Linha))
             {
-                VulnerablePieceForEnPassant = possivelEnPassant;
+                VulnerablePieceForEnPassant = movimentedPiece;
             }
             else
             {
@@ -251,7 +222,7 @@ namespace ConsoleChessGame.Game
             }
         }
 
-        public bool EstaEmXeque(Color cor)
+        public static bool IsInCheck(Color cor)
         {
 
             PositionOnBoard posicaoRei = FindRei(cor).Position;
@@ -265,9 +236,9 @@ namespace ConsoleChessGame.Game
             return false;
         }
 
-        public bool TesteXequeMate(Color cor)
+        public static bool IsInCheckmate(Color cor)
         {
-            if (!EstaEmXeque(cor))
+            if (!IsInCheck(cor))
             {
                 return false;
             }
@@ -285,7 +256,7 @@ namespace ConsoleChessGame.Game
                             PositionOnBoard origem = p.Position;
 
                             Piece pecaCapturada = MakeAMove(origem, destino);
-                            bool testeXeque = EstaEmXeque(cor);
+                            bool testeXeque = IsInCheck(cor);
                             UndoAMove(origem, destino, pecaCapturada);
                             if (!testeXeque)
                             {
@@ -311,7 +282,7 @@ namespace ConsoleChessGame.Game
             return null;
         }
 
-        public void MudarJogador()
+        public static void ChangePlayer()
         {
             if (CurrentPlayerColor == Color.White)
             {
@@ -390,6 +361,7 @@ namespace ConsoleChessGame.Game
         /// <param name="initialPosition">Posição inicial da jogada</param>
         private static void MakeASmallCastling(PositionOnBoard initialPosition)
         {
+            // Posição da torre com base na posição do rei
             PositionOnBoard rookPosition = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 3);
             PositionOnBoard rookDestiny = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 1);
 
@@ -405,6 +377,7 @@ namespace ConsoleChessGame.Game
         /// <param name="initialPosition">Posição inicial da jogada</param>
         private static void UndoASmallCastling(PositionOnBoard initialPosition)
         {
+            // Posição da torre com base na posição do rei
             PositionOnBoard rookPosition = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 1);
             PositionOnBoard rookDestiny = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 3);
 
@@ -425,19 +398,37 @@ namespace ConsoleChessGame.Game
             movimentedPiece is King && 
             finalPosition.Coluna == initialPosition.Coluna - 2;
 
+
         /// <summary>
         /// Realiza a jogada Roque grande
         /// </summary>
         /// <param name="initialPosition">Posição inicial da jogada</param>
         private static void MakeABigCastling(PositionOnBoard initialPosition)
         {
-            PositionOnBoard posTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 4);
-            PositionOnBoard destinoTorre = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 1);
+            // Posição da torre com base na posição do rei
+            PositionOnBoard rookPosition = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 4);
+            PositionOnBoard rookDestiny = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 1);
 
-            Piece torre = Board.RemovePiece(posTorre);
-            torre.IncreaseMovement();
+            Piece rook = Board.RemovePiece(rookPosition);
+            rook.IncreaseMovement();
 
-            Board.PutPiece(torre, destinoTorre);
+            Board.PutPiece(rook, rookDestiny);
+        }
+
+        /// <summary>
+        /// Desfaz a jogada de Roque Grande
+        /// </summary>
+        /// <param name="initialPosition">Posição inicial da jogada</param>
+        private static void UndoABigCastling(PositionOnBoard initialPosition)
+        {
+            // Posição da torre com base na posição do rei
+            PositionOnBoard rookPosition = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 1);
+            PositionOnBoard rookDestiny = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 4);
+
+            Piece rook = Board.RemovePiece(rookPosition);
+            rook.IncreaseMovement();
+            
+            Board.PutPiece(rook, rookDestiny);
         }
 
         /// <summary>
@@ -476,5 +467,24 @@ namespace ConsoleChessGame.Game
             capturedPiece = Board.RemovePiece(positionCapturedPiece);
             CapturedPieces.Add(capturedPiece);
         }
+
+        /// <summary>
+        /// Desfaz a jogada En Passant
+        /// </summary>
+        /// <param name="finalPosition">Posição final da jogada realizada</param>
+        /// <param name="movimentedPiece">Peça movimentada</param>
+        private static void UndoAEnPassant(PositionOnBoard finalPosition, Piece movimentedPiece)
+        {
+            Piece pawn = Board.RemovePiece(finalPosition);
+
+            PositionOnBoard pawnFinalPosition;
+            if (movimentedPiece.Color == Color.White)
+                pawnFinalPosition = new PositionOnBoard(3, finalPosition.Coluna);
+            else
+                pawnFinalPosition = new PositionOnBoard(4, finalPosition.Coluna);
+
+            Board.PutPiece(pawn, pawnFinalPosition);
+        }
+
     }
 }
