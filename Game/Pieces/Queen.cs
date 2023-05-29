@@ -27,107 +27,107 @@ namespace ConsoleChessGame.Game.Pieces
             PositionOnBoard pos = new PositionOnBoard(0, 0);
 
             // N
-            pos.DefinirValores(Position.Linha - 1, Position.Coluna);
+            pos.SetValues(Position.Row - 1, Position.Column);
             while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
                 {
                     break;
                 }
-                pos.Linha--;
+                pos.Row--;
 
             }
 
             // NE
-            pos.DefinirValores(Position.Linha - 1, Position.Coluna + 1);
+            pos.SetValues(Position.Row - 1, Position.Column + 1);
             while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
                 {
                     break;
                 }
-                pos.Linha--;
-                pos.Coluna++;
+                pos.Row--;
+                pos.Column++;
             }
 
             // E
-            pos.DefinirValores(Position.Linha, Position.Coluna + 1);
+            pos.SetValues(Position.Row, Position.Column + 1);
             while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
                 {
                     break;
                 }
-                pos.Coluna += 1;
+                pos.Column += 1;
 
             }
 
             // SE
-            pos.DefinirValores(Position.Linha + 1, Position.Coluna + 1);
+            pos.SetValues(Position.Row + 1, Position.Column + 1);
             while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
                 {
                     break;
                 }
-                pos.Linha++;
-                pos.Coluna++;
+                pos.Row++;
+                pos.Column++;
             }
 
             // S
-            pos.DefinirValores(Position.Linha + 1, Position.Coluna);
+            pos.SetValues(Position.Row + 1, Position.Column);
             while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
                 {
                     break;
                 }
-                pos.Linha += 1;
+                pos.Row += 1;
 
             }
 
             // SO
-            pos.DefinirValores(Position.Linha + 1, Position.Coluna + 1);
+            pos.SetValues(Position.Row + 1, Position.Column + 1);
             while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
                 {
                     break;
                 }
-                pos.Linha++;
-                pos.Coluna++;
+                pos.Row++;
+                pos.Column++;
             }
 
             // O
-            pos.DefinirValores(Position.Linha, Position.Coluna - 1);
+            pos.SetValues(Position.Row, Position.Column - 1);
             while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
                 {
                     break;
                 }
-                pos.Coluna -= 1;
+                pos.Column -= 1;
 
             }
 
             // NO
-            pos.DefinirValores(Position.Linha - 1, Position.Coluna - 1);
+            pos.SetValues(Position.Row - 1, Position.Column - 1);
             while (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
                 if (Board.GetPiece(pos) != null && Board.GetPiece(pos).Color != Color)
                 {
                     break;
                 }
-                pos.Linha--;
-                pos.Coluna--;
+                pos.Row--;
+                pos.Column--;
             }
 
 

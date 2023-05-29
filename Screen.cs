@@ -15,24 +15,24 @@ namespace ConsoleChessGame
         /// Imprime o jogo de xadrez
         /// </summary>
         /// <param name="game">Jogo a ser utilizado para a impressão</param>
-        public static void PrintGame(GameService game)
+        public static void PrintGame()
         {
             // Imprimindo o tabuleiro
-            PrintBoard(game.Board);
+            PrintBoard(GameService.Board);
             Console.WriteLine();
 
             // Imprimindo peças capturadas
-            PrintCapturedPieces(game);
+            PrintCapturedPieces();
             Console.WriteLine();
 
             // Imprimindo turno atual
-            Console.WriteLine($"Turno: {game.Turn}");
+            Console.WriteLine($"Turno: {GameService.Turn}");
 
-            if (!game.FinishedGame)
+            if (!GameService.FinishedGame)
             {
-                Console.WriteLine($"Aguardando jogada da peça: {game.CurrentPlayerColor}");
+                Console.WriteLine($"Aguardando jogada da peça: {GameService.CurrentPlayerColor}");
 
-                if (game.IsCheck)
+                if (GameService.IsCheck)
                 {
                     Console.WriteLine("XEQUE!");
                 }
@@ -40,7 +40,7 @@ namespace ConsoleChessGame
             else
             {
                 Console.WriteLine("XEQUEMATE!");
-                Console.WriteLine($"Jogador Vencedor: {game.CurrentPlayerColor}");
+                Console.WriteLine($"Jogador Vencedor: {GameService.CurrentPlayerColor}");
             }
         }
 
@@ -48,14 +48,14 @@ namespace ConsoleChessGame
         /// Imprime as peças capturadas na partida
         /// </summary>
         /// <param name="partida">Instância de GameService para obter as peças capturadas na partida</param>
-        public static void PrintCapturedPieces(GameService partida)
+        public static void PrintCapturedPieces()
         {
             Console.WriteLine("Pecas Capturadas:");
 
             // Imprimindo peças Brancas capturadas
             Console.Write("Brancas: ");
 
-            var capturedWhitePieces = partida.GetCapturedPieces(Color.White);
+            var capturedWhitePieces = GameService.GetCapturedPieces(Color.White);
             PrintCapturedGroup(capturedWhitePieces);
             Console.WriteLine();
             
@@ -64,7 +64,7 @@ namespace ConsoleChessGame
 
             // Imprimindo peças Vermelhas
             Console.Write("Vermelhas: ");
-            PrintCapturedGroup(partida.GetCapturedPieces(Color.Red));
+            PrintCapturedGroup(GameService.GetCapturedPieces(Color.Red));
 
             Console.ForegroundColor = colorDefault;
             Console.WriteLine();
@@ -91,7 +91,7 @@ namespace ConsoleChessGame
         /// Imprime o tabuleiro (juntamente com as peças e cordenadas)
         /// </summary>
         /// <param name="board">Tabuleiro a ser utilizado para a impressão</param>
-        public static void PrintBoard(tabuleiro.BoardService board)
+        public static void PrintBoard(BoardService board)
         {
             for (int row = 0; row < board.Linhas; row++)
             {
@@ -113,7 +113,8 @@ namespace ConsoleChessGame
             Console.WriteLine();
             Console.WriteLine("     a b c d e f g h");
         }
-        public static void ImprimirTabuleiro(tabuleiro.BoardService tab, bool[,] movimentosPossiveis)
+
+        public static void ImprimirTabuleiro(BoardService tab, bool[,] movimentosPossiveis)
         {
             ConsoleColor fundoOriginal = Console.BackgroundColor;
             ConsoleColor fundoAlterado = ConsoleColor.DarkGray;

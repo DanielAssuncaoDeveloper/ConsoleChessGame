@@ -26,59 +26,59 @@ namespace ConsoleChessGame.Game.Pieces
             PositionOnBoard pos = new PositionOnBoard(0, 0);
 
             // N + O
-            pos.DefinirValores(Position.Linha - 2, Position.Coluna - 1);
+            pos.SetValues(Position.Row - 2, Position.Column - 1);
             if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
             }
 
             // N + E
-            pos.DefinirValores(Position.Linha - 2, Position.Coluna + 1);
+            pos.SetValues(Position.Row - 2, Position.Column + 1);
             if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
             }
 
             // E + N
-            pos.DefinirValores(Position.Linha - 1, Position.Coluna + 2);
+            pos.SetValues(Position.Row - 1, Position.Column + 2);
             if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
             }
 
             // E + S
-            pos.DefinirValores(Position.Linha + 1, Position.Coluna + 2);
+            pos.SetValues(Position.Row + 1, Position.Column + 2);
             if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
             }
 
             // S + E
-            pos.DefinirValores(Position.Linha + 2, Position.Coluna + 1);
+            pos.SetValues(Position.Row + 2, Position.Column + 1);
             if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
             }
 
             // S + O
-            pos.DefinirValores(Position.Linha + 2, Position.Coluna - 1);
+            pos.SetValues(Position.Row + 2, Position.Column - 1);
             if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
             }
 
             // O + S
-            pos.DefinirValores(Position.Linha + 1, Position.Coluna - 2);
+            pos.SetValues(Position.Row + 1, Position.Column - 2);
             if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
             }
 
             // O + N
-            pos.DefinirValores(Position.Linha - 1, Position.Coluna - 2);
+            pos.SetValues(Position.Row - 1, Position.Column - 2);
             if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
             }
 
             return movPosiveis;
