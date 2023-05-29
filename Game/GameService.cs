@@ -174,6 +174,11 @@ namespace ConsoleChessGame.Game
 
         }
 
+        /// <summary>
+        /// Realiza uma jogada
+        /// </summary>
+        /// <param name="initialPosition">Posição inicial da peça movimentada</param>
+        /// <param name="finalPosition">Posição final da peça movimentada</param>
         public static void MakeAPlay(PositionOnBoard initialPosition, PositionOnBoard finalPosition)
         {
             Piece capturedPiece = MakeAMove(initialPosition, finalPosition);
@@ -193,26 +198,27 @@ namespace ConsoleChessGame.Game
             {
                 PassTurn();
                 ChangePlayer();
-            } // STOPPED HERE
+            }
 
             // Jogada Especial: Promoção
             if (movimentedPiece is Pawn)
             {
-                if (movimentedPiece.Color == Color.White && finalPosition.Linha == 0 ||
-                    movimentedPiece.Color == Color.Red && finalPosition.Linha == 7)
+                if (movimentedPiece.Color == Color.White && finalPosition.Row == 0 ||
+                    movimentedPiece.Color == Color.Red && finalPosition.Row == 7)
                 {
                     movimentedPiece = Board.RemovePiece(finalPosition);
                     Pieces.Remove(movimentedPiece);
-                    Piece dama = new Queen(movimentedPiece.Color, Board);
-                    Board.PutPiece(dama, finalPosition);
-                    Pieces.Add(dama);
+
+                    Piece queen = new Queen(movimentedPiece.Color, Board);
+                    Board.PutPiece(queen, finalPosition);
+                    Pieces.Add(queen);
                 }
             }
 
             // Jogada Especial: En Passant
             if (movimentedPiece is Pawn &&
-                (finalPosition.Linha - 2 == initialPosition.Linha ||
-                 finalPosition.Linha + 2 == initialPosition.Linha))
+                (finalPosition.Row - 2 == initialPosition.Row ||
+                 finalPosition.Row + 2 == initialPosition.Row))
             {
                 VulnerablePieceForEnPassant = movimentedPiece;
             }
@@ -222,82 +228,86 @@ namespace ConsoleChessGame.Game
             }
         }
 
-        public static bool IsInCheck(Color cor)
+        /// <summary>
+        /// Verifica se o jogador de uma determinada cor está em cheque
+        /// </summary>
+        /// <param name="color">Cor do jogador</param>
+        public static bool IsInCheck(Color color)
         {
+            PositionOnBoard kingPosition = FindRei(color).Position;
+            IEnumerable<Piece> opponentPieces = GetPiecesInGame(GetOpponentColor(color));
 
-            PositionOnBoard posicaoRei = FindRei(cor).Position;
-            foreach (Piece p in GetPiecesInGame(GetOpponentColor(cor)))
-            {
-                if (p.GetValidMoves()[posicaoRei.Linha, posicaoRei.Coluna])
-                {
-                    return true;
-                }
-            }
-            return false;
+            return opponentPieces.Any(p => 
+                    p.GetValidMoves()[kingPosition.Row, kingPosition.Column]
+                );
         }
 
-        public static bool IsInCheckmate(Color cor)
+        /// <summary>
+        /// Verifica se o jogador de uma determinada cor está em cheque mate
+        /// </summary>
+        /// <param name="color">Cor do jogador a verificar se está em cheque mate</param>
+        public static bool IsInCheckmate(Color color)
         {
-            if (!IsInCheck(cor))
-            {
+            if (!IsInCheck(color))
                 return false;
-            }
 
-            foreach (Piece p in GetPiecesInGame(cor))
+            foreach (Piece piece in GetPiecesInGame(color))
             {
-                bool[,] movPossiveis = p.GetValidMoves();
-                for (int i = 0; i < Board.Linhas; i++)
-                {
-                    for (int j = 0; j < Board.Colunas; j++)
-                    {
-                        if (movPossiveis[i, j])
-                        {
-                            PositionOnBoard destino = new PositionOnBoard(i, j);
-                            PositionOnBoard origem = p.Position;
+                bool[,] possibleMoves = piece.GetValidMoves();
 
-                            Piece pecaCapturada = MakeAMove(origem, destino);
-                            bool testeXeque = IsInCheck(cor);
-                            UndoAMove(origem, destino, pecaCapturada);
-                            if (!testeXeque)
-                            {
+                for (int row = 0; row < Board.Linhas; row++)
+                {
+                    for (int column = 0; column < Board.Colunas; column++)
+                    {
+                        if (possibleMoves[row, column])
+                        {
+                            PositionOnBoard finalPosition = new PositionOnBoard(row, column);
+                            PositionOnBoard initialPosition = piece.Position;
+
+                            Piece pecaCapturada = MakeAMove(initialPosition, finalPosition);
+                            bool isCheck = IsInCheck(color);
+
+                            UndoAMove(initialPosition, finalPosition, pecaCapturada);
+                            if (!isCheck)
                                 return false;
-                            }
                         }
                     }
                 }
             }
+
             return true;
         }
 
+        /// <summary>
+        /// Obtém o Rei de uma determiada cor
+        /// </summary>
+        /// <param name="color">Cor do Rei a ser procurado</param>
+        /// <returns>Rei encontrado</returns>
+        private static Piece FindRei(Color color) =>
+            GetPiecesInGame(color)
+                .FirstOrDefault(p => p is King);
 
-        private Piece FindRei(Color cor)
-        {
-            foreach (Piece p in GetPiecesInGame(cor))
-            {
-                if (p is King)
-                {
-                    return p;
-                }
-            }
-            return null;
-        }
-
+        /// <summary>
+        /// Altera a vez do jogador
+        /// </summary>
         public static void ChangePlayer()
         {
             if (CurrentPlayerColor == Color.White)
-            {
                 CurrentPlayerColor = Color.Red;
-            }
             else
-            {
                 CurrentPlayerColor = Color.White;
-            }
         }
 
-        public static void ColocarNovaPeca(char coluna, int linha, Piece peca)
+        /// <summary>
+        /// Insere uma nova peça no tabuleiro
+        /// </summary>
+        /// <param name="column">Coluna da nova peça</param>
+        /// <param name="row">Linha da nova peça</param>
+        /// <param name="piece">Peça a ser inserida</param>
+        public static void PutNewPieceOnBoard(char column, int row, Piece piece)
         {
-            Board.PutPiece(peca, new PositionOnGame(coluna, linha).ConvertToPositionOnBoard());
-            Pieces.Add(peca);
+            Board.PutPiece(piece, new PositionOnGame(column, row).ConvertToPositionOnBoard());
+            Pieces.Add(piece);
         }
 
         /// <summary>
@@ -307,40 +317,39 @@ namespace ConsoleChessGame.Game
         private static void InitializePieces()
         {
             // todo: Refatorar cada peça
-            ColocarNovaPeca('a', 1, new Rook(Color.White, Board));
-            ColocarNovaPeca('h', 1, new Rook(Color.White, Board));
-            ColocarNovaPeca('e', 1, new King(Color.White, Board, this));
-            ColocarNovaPeca('d', 1, new Queen(Color.White, Board));
-            ColocarNovaPeca('b', 1, new Horse(Color.White, Board));
-            ColocarNovaPeca('g', 1, new Horse(Color.White, Board));
-            ColocarNovaPeca('f', 1, new Bishop(Color.White, Board));
-            ColocarNovaPeca('c', 1, new Bishop(Color.White, Board));
-            ColocarNovaPeca('a', 2, new Pawn(Color.White, Board, this));
-            ColocarNovaPeca('h', 2, new Pawn(Color.White, Board, this));
-            ColocarNovaPeca('e', 2, new Pawn(Color.White, Board, this));
-            ColocarNovaPeca('d', 2, new Pawn(Color.White, Board, this));
-            ColocarNovaPeca('b', 2, new Pawn(Color.White, Board, this));
-            ColocarNovaPeca('g', 2, new Pawn(Color.White, Board, this));
-            ColocarNovaPeca('f', 2, new Pawn(Color.White, Board, this));
-            ColocarNovaPeca('c', 2, new Pawn(Color.White, Board, this));
+            PutNewPieceOnBoard('a', 1, new Rook(Color.White, Board));
+            PutNewPieceOnBoard('h', 1, new Rook(Color.White, Board));
+            PutNewPieceOnBoard('e', 1, new King(Color.White, Board));
+            PutNewPieceOnBoard('d', 1, new Queen(Color.White, Board));
+            PutNewPieceOnBoard('b', 1, new Horse(Color.White, Board));
+            PutNewPieceOnBoard('g', 1, new Horse(Color.White, Board));
+            PutNewPieceOnBoard('f', 1, new Bishop(Color.White, Board));
+            PutNewPieceOnBoard('c', 1, new Bishop(Color.White, Board));
+            PutNewPieceOnBoard('a', 2, new Pawn(Color.White, Board));
+            PutNewPieceOnBoard('h', 2, new Pawn(Color.White, Board));
+            PutNewPieceOnBoard('e', 2, new Pawn(Color.White, Board));
+            PutNewPieceOnBoard('d', 2, new Pawn(Color.White, Board));
+            PutNewPieceOnBoard('b', 2, new Pawn(Color.White, Board));
+            PutNewPieceOnBoard('g', 2, new Pawn(Color.White, Board));
+            PutNewPieceOnBoard('f', 2, new Pawn(Color.White, Board));
+            PutNewPieceOnBoard('c', 2, new Pawn(Color.White, Board));
 
-
-            ColocarNovaPeca('a', 8, new Rook(Color.Red, Board));
-            ColocarNovaPeca('h', 8, new Rook(Color.Red, Board));
-            ColocarNovaPeca('e', 8, new King(Color.Red, Board, this));
-            ColocarNovaPeca('d', 8, new Queen(Color.Red, Board));
-            ColocarNovaPeca('b', 8, new Horse(Color.Red, Board));
-            ColocarNovaPeca('g', 8, new Horse(Color.Red, Board));
-            ColocarNovaPeca('f', 8, new Bishop(Color.Red, Board));
-            ColocarNovaPeca('c', 8, new Bishop(Color.Red, Board));
-            ColocarNovaPeca('a', 7, new Pawn(Color.Red, Board, this));
-            ColocarNovaPeca('h', 7, new Pawn(Color.Red, Board, this));
-            ColocarNovaPeca('e', 7, new Pawn(Color.Red, Board, this));
-            ColocarNovaPeca('d', 7, new Pawn(Color.Red, Board, this));
-            ColocarNovaPeca('b', 7, new Pawn(Color.Red, Board, this));
-            ColocarNovaPeca('g', 7, new Pawn(Color.Red, Board, this));
-            ColocarNovaPeca('f', 7, new Pawn(Color.Red, Board, this));
-            ColocarNovaPeca('c', 7, new Pawn(Color.Red, Board, this));
+            PutNewPieceOnBoard('a', 8, new Rook(Color.Red, Board));
+            PutNewPieceOnBoard('h', 8, new Rook(Color.Red, Board));
+            PutNewPieceOnBoard('e', 8, new King(Color.Red, Board));
+            PutNewPieceOnBoard('d', 8, new Queen(Color.Red, Board));
+            PutNewPieceOnBoard('b', 8, new Horse(Color.Red, Board));
+            PutNewPieceOnBoard('g', 8, new Horse(Color.Red, Board));
+            PutNewPieceOnBoard('f', 8, new Bishop(Color.Red, Board));
+            PutNewPieceOnBoard('c', 8, new Bishop(Color.Red, Board));
+            PutNewPieceOnBoard('a', 7, new Pawn(Color.Red, Board));
+            PutNewPieceOnBoard('h', 7, new Pawn(Color.Red, Board));
+            PutNewPieceOnBoard('e', 7, new Pawn(Color.Red, Board));
+            PutNewPieceOnBoard('d', 7, new Pawn(Color.Red, Board));
+            PutNewPieceOnBoard('b', 7, new Pawn(Color.Red, Board));
+            PutNewPieceOnBoard('g', 7, new Pawn(Color.Red, Board));
+            PutNewPieceOnBoard('f', 7, new Pawn(Color.Red, Board));
+            PutNewPieceOnBoard('c', 7, new Pawn(Color.Red, Board));
 
         }
 
@@ -353,7 +362,7 @@ namespace ConsoleChessGame.Game
         /// <returns></returns>
         private static bool IsASmallCastling(Piece movimentedPiece, PositionOnBoard initialPosition, PositionOnBoard finalPosition) =>
             movimentedPiece is King &&
-            finalPosition.Coluna == initialPosition.Coluna + 2;
+            finalPosition.Column == initialPosition.Column + 2;
 
         /// <summary>
         /// Realiza a jogada Roque pequeno
@@ -362,8 +371,8 @@ namespace ConsoleChessGame.Game
         private static void MakeASmallCastling(PositionOnBoard initialPosition)
         {
             // Posição da torre com base na posição do rei
-            PositionOnBoard rookPosition = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 3);
-            PositionOnBoard rookDestiny = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 1);
+            PositionOnBoard rookPosition = new PositionOnBoard(initialPosition.Row, initialPosition.Column + 3);
+            PositionOnBoard rookDestiny = new PositionOnBoard(initialPosition.Row, initialPosition.Column + 1);
 
             Piece rook = Board.RemovePiece(rookPosition);
             rook.IncreaseMovement();
@@ -378,8 +387,8 @@ namespace ConsoleChessGame.Game
         private static void UndoASmallCastling(PositionOnBoard initialPosition)
         {
             // Posição da torre com base na posição do rei
-            PositionOnBoard rookPosition = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 1);
-            PositionOnBoard rookDestiny = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna + 3);
+            PositionOnBoard rookPosition = new PositionOnBoard(initialPosition.Row, initialPosition.Column + 1);
+            PositionOnBoard rookDestiny = new PositionOnBoard(initialPosition.Row, initialPosition.Column + 3);
 
             Piece rook = Board.RemovePiece(rookPosition);
             rook.DecrementMovement();
@@ -396,7 +405,7 @@ namespace ConsoleChessGame.Game
         /// <returns></returns>
         private static bool IsABigCastling(Piece movimentedPiece, PositionOnBoard initialPosition, PositionOnBoard finalPosition) =>
             movimentedPiece is King && 
-            finalPosition.Coluna == initialPosition.Coluna - 2;
+            finalPosition.Column == initialPosition.Column - 2;
 
 
         /// <summary>
@@ -406,8 +415,8 @@ namespace ConsoleChessGame.Game
         private static void MakeABigCastling(PositionOnBoard initialPosition)
         {
             // Posição da torre com base na posição do rei
-            PositionOnBoard rookPosition = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 4);
-            PositionOnBoard rookDestiny = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 1);
+            PositionOnBoard rookPosition = new PositionOnBoard(initialPosition.Row, initialPosition.Column - 4);
+            PositionOnBoard rookDestiny = new PositionOnBoard(initialPosition.Row, initialPosition.Column - 1);
 
             Piece rook = Board.RemovePiece(rookPosition);
             rook.IncreaseMovement();
@@ -422,8 +431,8 @@ namespace ConsoleChessGame.Game
         private static void UndoABigCastling(PositionOnBoard initialPosition)
         {
             // Posição da torre com base na posição do rei
-            PositionOnBoard rookPosition = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 1);
-            PositionOnBoard rookDestiny = new PositionOnBoard(initialPosition.Linha, initialPosition.Coluna - 4);
+            PositionOnBoard rookPosition = new PositionOnBoard(initialPosition.Row, initialPosition.Column - 1);
+            PositionOnBoard rookDestiny = new PositionOnBoard(initialPosition.Row, initialPosition.Column - 4);
 
             Piece rook = Board.RemovePiece(rookPosition);
             rook.IncreaseMovement();
@@ -446,7 +455,7 @@ namespace ConsoleChessGame.Game
                 PositionOnBoard finalPosition
         ) =>
             movimentedPiece is Pawn &&
-            finalPosition.Coluna != initialPosition.Coluna &&
+            finalPosition.Column != initialPosition.Column &&
             capturedPiece == VulnerablePieceForEnPassant;
 
         /// <summary>
@@ -460,9 +469,9 @@ namespace ConsoleChessGame.Game
             PositionOnBoard positionCapturedPiece;
 
             if (movimentedPiece.Color == Color.White)
-                positionCapturedPiece = new PositionOnBoard(finalPosition.Linha + 1, finalPosition.Coluna);
+                positionCapturedPiece = new PositionOnBoard(finalPosition.Row + 1, finalPosition.Column);
             else
-                positionCapturedPiece = new PositionOnBoard(finalPosition.Linha - 1, finalPosition.Coluna);
+                positionCapturedPiece = new PositionOnBoard(finalPosition.Row - 1, finalPosition.Column);
 
             capturedPiece = Board.RemovePiece(positionCapturedPiece);
             CapturedPieces.Add(capturedPiece);
@@ -479,9 +488,9 @@ namespace ConsoleChessGame.Game
 
             PositionOnBoard pawnFinalPosition;
             if (movimentedPiece.Color == Color.White)
-                pawnFinalPosition = new PositionOnBoard(3, finalPosition.Coluna);
+                pawnFinalPosition = new PositionOnBoard(3, finalPosition.Column);
             else
-                pawnFinalPosition = new PositionOnBoard(4, finalPosition.Coluna);
+                pawnFinalPosition = new PositionOnBoard(4, finalPosition.Column);
 
             Board.PutPiece(pawn, pawnFinalPosition);
         }

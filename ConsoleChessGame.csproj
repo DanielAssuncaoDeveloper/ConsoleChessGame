@@ -3,8 +3,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Xadrez_Console</RootNamespace>
-    <StartupObject>Xadrez_Console.Program</StartupObject>
+    <RootNamespace>ConsoleChessGame</RootNamespace>
+    <StartupObject>ConsoleChessGame.Program</StartupObject>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

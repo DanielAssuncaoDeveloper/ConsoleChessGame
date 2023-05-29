@@ -8,13 +8,9 @@ namespace ConsoleChessGame.Game.Pieces
 {
     class Pawn : Piece
     {
-        private GameService partida;
-
-        public Pawn(Color cor, tabuleiro.BoardService tab, GameService partida)
+        public Pawn(Color cor, tabuleiro.BoardService tab)
             : base(cor, tab)
-        {
-            this.partida = partida;
-        }
+        { }
 
         private bool ExisteInimigo(PositionOnBoard pos)
         {
@@ -25,7 +21,7 @@ namespace ConsoleChessGame.Game.Pieces
         public bool MovimentoPossivel(PositionOnBoard pos)
         {
             Piece p = Board.GetPiece(pos);
-            if (pos.Coluna != Position.Coluna)
+            if (pos.Column != Position.Column)
             {
                 return ExisteInimigo(pos);
             }
@@ -41,48 +37,48 @@ namespace ConsoleChessGame.Game.Pieces
             if (Color == Color.White)
             {
                 // Inicio do Jogo
-                pos.DefinirValores(Position.Linha - 2, Position.Coluna);
+                pos.SetValues(Position.Row - 2, Position.Column);
                 if (NumberOfMovements == 0)
                 {
-                    movPosiveis[pos.Linha, pos.Coluna] = true;
+                    movPosiveis[pos.Row, pos.Column] = true;
                 }
 
                 // N
-                pos.DefinirValores(Position.Linha - 1, Position.Coluna);
+                pos.SetValues(Position.Row - 1, Position.Column);
                 if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
                 {
-                    movPosiveis[pos.Linha, pos.Coluna] = true;
+                    movPosiveis[pos.Row, pos.Column] = true;
                 }
 
                 // NE
-                pos.DefinirValores(Position.Linha - 1, Position.Coluna + 1);
+                pos.SetValues(Position.Row - 1, Position.Column + 1);
                 if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
                 {
-                    movPosiveis[pos.Linha, pos.Coluna] = true;
+                    movPosiveis[pos.Row, pos.Column] = true;
                 }
 
                 // NO
-                pos.DefinirValores(Position.Linha - 1, Position.Coluna - 1);
+                pos.SetValues(Position.Row - 1, Position.Column - 1);
                 if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
                 {
-                    movPosiveis[pos.Linha, pos.Coluna] = true;
+                    movPosiveis[pos.Row, pos.Column] = true;
                 }
 
 
                 // Jogada Especial: En Passant
-                if (Position.Linha == 3)
+                if (Position.Row == 3)
                 {
-                    PositionOnBoard esquerda = new PositionOnBoard(Position.Linha, Position.Coluna - 1);
+                    PositionOnBoard esquerda = new PositionOnBoard(Position.Row, Position.Column - 1);
                     if (Board.IsValidPosition(esquerda) && ExisteInimigo(esquerda) &&
-                        Board.GetPiece(esquerda) == partida.VulnerablePieceForEnPassant)
+                        Board.GetPiece(esquerda) == GameService.VulnerablePieceForEnPassant)
                     {
-                        movPosiveis[esquerda.Linha - 1, esquerda.Coluna] = true;
+                        movPosiveis[esquerda.Row - 1, esquerda.Column] = true;
                     }
-                    PositionOnBoard direita = new PositionOnBoard(Position.Linha, Position.Coluna + 1);
+                    PositionOnBoard direita = new PositionOnBoard(Position.Row, Position.Column + 1);
                     if (Board.IsValidPosition(direita) && ExisteInimigo(direita) &&
-                        Board.GetPiece(direita) == partida.VulnerablePieceForEnPassant)
+                        Board.GetPiece(direita) == GameService.VulnerablePieceForEnPassant)
                     {
-                        movPosiveis[direita.Linha - 1, direita.Coluna] = true;
+                        movPosiveis[direita.Row - 1, direita.Column] = true;
                     }
                 }
 
@@ -92,50 +88,50 @@ namespace ConsoleChessGame.Game.Pieces
             else
             {
                 // Inicio do Jogo
-                pos.DefinirValores(Position.Linha + 2, Position.Coluna);
+                pos.SetValues(Position.Row + 2, Position.Column);
                 if (NumberOfMovements == 0)
                 {
-                    movPosiveis[pos.Linha, pos.Coluna] = true;
+                    movPosiveis[pos.Row, pos.Column] = true;
                 }
 
                 // N
-                pos.DefinirValores(Position.Linha + 1, Position.Coluna);
+                pos.SetValues(Position.Row + 1, Position.Column);
                 if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
                 {
-                    movPosiveis[pos.Linha, pos.Coluna] = true;
+                    movPosiveis[pos.Row, pos.Column] = true;
                 }
 
                 // NE
-                pos.DefinirValores(Position.Linha + 1, Position.Coluna + 1);
+                pos.SetValues(Position.Row + 1, Position.Column + 1);
                 if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
                 {
-                    movPosiveis[pos.Linha, pos.Coluna] = true;
+                    movPosiveis[pos.Row, pos.Column] = true;
                 }
 
                 // NO
-                pos.DefinirValores(Position.Linha + 1, Position.Coluna - 1);
+                pos.SetValues(Position.Row + 1, Position.Column - 1);
                 if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
                 {
-                    movPosiveis[pos.Linha, pos.Coluna] = true;
+                    movPosiveis[pos.Row, pos.Column] = true;
                 }
 
             }
 
 
             // Jogada Especial: En Passant
-            if (Position.Linha == 4)
+            if (Position.Row == 4)
             {
-                PositionOnBoard esquerda = new PositionOnBoard(Position.Linha, Position.Coluna - 1);
+                PositionOnBoard esquerda = new PositionOnBoard(Position.Row, Position.Column - 1);
                 if (Board.IsValidPosition(esquerda) && ExisteInimigo(esquerda) &&
-                    Board.GetPiece(esquerda) == partida.VulnerablePieceForEnPassant)
+                    Board.GetPiece(esquerda) == GameService.VulnerablePieceForEnPassant)
                 {
-                    movPosiveis[esquerda.Linha + 1, esquerda.Coluna] = true;
+                    movPosiveis[esquerda.Row + 1, esquerda.Column] = true;
                 }
-                PositionOnBoard direita = new PositionOnBoard(Position.Linha, Position.Coluna + 1);
+                PositionOnBoard direita = new PositionOnBoard(Position.Row, Position.Column + 1);
                 if (Board.IsValidPosition(direita) && ExisteInimigo(direita) &&
-                    Board.GetPiece(direita) == partida.VulnerablePieceForEnPassant)
+                    Board.GetPiece(direita) == GameService.VulnerablePieceForEnPassant)
                 {
-                    movPosiveis[direita.Linha + 1, direita.Coluna] = true;
+                    movPosiveis[direita.Row + 1, direita.Column] = true;
                 }
             }
 

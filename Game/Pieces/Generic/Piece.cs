@@ -66,7 +66,7 @@ namespace ConsoleChessGame.Game.Pieces.Abstract
         /// <param name="position">Posição a qual deseja mover a peça</param>
         public bool CanMoveTo(PositionOnBoard position)
         {
-            return GetValidMoves()[position.Linha, position.Coluna];
+            return GetValidMoves()[position.Row, position.Column];
         }
 
         /// <summary>

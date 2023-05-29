@@ -6,13 +6,9 @@ namespace ConsoleChessGame.Game.Pieces
 {
     class King : Piece
     {
-        private GameService partida;
-
-        public King(Color cor, tabuleiro.BoardService tab, GameService partida)
+        public King(Color cor, BoardService tab)
             : base(cor, tab)
-        {
-            this.partida = partida;
-        }
+        {}
 
         public override string ToString()
         {
@@ -32,90 +28,90 @@ namespace ConsoleChessGame.Game.Pieces
             PositionOnBoard pos = new PositionOnBoard(0, 0);
 
             // norte
-            pos.DefinirValores(Position.Linha - 1, Position.Coluna);
+            pos.SetValues(Position.Row - 1, Position.Column);
             if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
             }
 
             // nordeste
-            pos.DefinirValores(Position.Linha - 1, Position.Coluna + 1);
+            pos.SetValues(Position.Row - 1, Position.Column + 1);
             if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
             }
 
             // oeste
-            pos.DefinirValores(Position.Linha, Position.Coluna + 1);
+            pos.SetValues(Position.Row, Position.Column + 1);
             if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
             }
 
             // sudeste
-            pos.DefinirValores(Position.Linha + 1, Position.Coluna + 1);
+            pos.SetValues(Position.Row + 1, Position.Column + 1);
             if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
             }
 
             // sul 
-            pos.DefinirValores(Position.Linha + 1, Position.Coluna);
+            pos.SetValues(Position.Row + 1, Position.Column);
             if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
             }
 
             // suldoeste
-            pos.DefinirValores(Position.Linha + 1, Position.Coluna - 1);
+            pos.SetValues(Position.Row + 1, Position.Column - 1);
             if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
             }
 
             // leste
-            pos.DefinirValores(Position.Linha, Position.Coluna - 1);
+            pos.SetValues(Position.Row, Position.Column - 1);
             if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
-                movPosiveis[pos.Linha, pos.Coluna] = true;
+                movPosiveis[pos.Row, pos.Column] = true;
             }
 
             // noroeste
-            pos.DefinirValores(Position.Linha - 1, Position.Coluna - 1);
+            pos.SetValues(Position.Row - 1, Position.Column - 1);
             if (Board.IsValidPosition(pos) && MovimentoPossivel(pos))
             {
             }
 
 
             // Jogada Especial: Roque 
-            if (NumberOfMovements == 0 && !partida.IsCheck)
+            if (NumberOfMovements == 0 && !GameService.IsCheck)
             {
                 // Roque pequeno
-                PositionOnBoard posTorre1 = new PositionOnBoard(Position.Linha, Position.Coluna + 3);
+                PositionOnBoard posTorre1 = new PositionOnBoard(Position.Row, Position.Column + 3);
                 if (TesteTorreParaRoque(posTorre1))
                 {
-                    PositionOnBoard pos1 = new PositionOnBoard(Position.Linha, Position.Coluna + 1);
-                    PositionOnBoard pos2 = new PositionOnBoard(Position.Linha, Position.Coluna + 2);
+                    PositionOnBoard pos1 = new PositionOnBoard(Position.Row, Position.Column + 1);
+                    PositionOnBoard pos2 = new PositionOnBoard(Position.Row, Position.Column + 2);
                     if (Board.GetPiece(pos1) == null && Board.GetPiece(pos2) == null)
                     {
-                        movPosiveis[Position.Linha, Position.Coluna + 2] = true;
+                        movPosiveis[Position.Row, Position.Column + 2] = true;
                     }
 
                 }
 
                 // Roque Grande
-                PositionOnBoard posTorre2 = new PositionOnBoard(Position.Linha, Position.Coluna - 4);
+                PositionOnBoard posTorre2 = new PositionOnBoard(Position.Row, Position.Column - 4);
                 if (TesteTorreParaRoque(posTorre1))
                 {
-                    PositionOnBoard pos1 = new PositionOnBoard(Position.Linha, Position.Coluna - 1);
-                    PositionOnBoard pos2 = new PositionOnBoard(Position.Linha, Position.Coluna - 2);
-                    PositionOnBoard pos3 = new PositionOnBoard(Position.Linha, Position.Coluna - 3);
+                    PositionOnBoard pos1 = new PositionOnBoard(Position.Row, Position.Column - 1);
+                    PositionOnBoard pos2 = new PositionOnBoard(Position.Row, Position.Column - 2);
+                    PositionOnBoard pos3 = new PositionOnBoard(Position.Row, Position.Column - 3);
 
                     if (Board.GetPiece(pos1) == null &&
                         Board.GetPiece(pos2) == null &&
                         Board.GetPiece(pos3) == null)
                     {
-                        movPosiveis[Position.Linha, Position.Coluna - 2] = true;
+                        movPosiveis[Position.Row, Position.Column - 2] = true;
                     }
 
                 }

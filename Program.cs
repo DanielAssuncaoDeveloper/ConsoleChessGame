@@ -34,7 +34,7 @@ namespace ConsoleChessGame
                         GameService.ValidateDestinationPosition(origin, destino);
 
                         Console.WriteLine(destino);
-                        GameService.RealizarJogada(origin, destino);
+                        GameService.MakeAPlay(origin, destino);
                     }
                     catch (ExceptionBoard e)
                     {
@@ -44,7 +44,7 @@ namespace ConsoleChessGame
                     }
                 }
                 Console.Clear();
-                Screen.PrintGame(game);
+                Screen.PrintGame();
             }
             catch (ExceptionBoard e)
             {

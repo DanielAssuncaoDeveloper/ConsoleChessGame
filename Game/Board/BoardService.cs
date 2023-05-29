@@ -33,7 +33,7 @@ namespace tabuleiro
         /// <param name="column">Coluna do tabuleiro</param>
         public Piece GetPiece(PositionOnBoard position)
         {
-            return Pieces[position.Linha, position.Coluna];
+            return Pieces[position.Row, position.Column];
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace tabuleiro
                 throw new ExceptionBoard("Já existe uma peça nessa posição.");
 
             // Colocando a peça na matriz do tabuleiro
-            Pieces[destinyPosition.Linha, destinyPosition.Coluna] = piece;
+            Pieces[destinyPosition.Row, destinyPosition.Column] = piece;
             piece.Position = destinyPosition;
         }
 
@@ -64,7 +64,7 @@ namespace tabuleiro
 
             pieceRemoved.Position = null;
 
-            Pieces[position.Linha, position.Coluna] = null;
+            Pieces[position.Row, position.Column] = null;
             return pieceRemoved;
         }
 
@@ -98,10 +98,10 @@ namespace tabuleiro
         public bool IsValidPosition(PositionOnBoard position)
         {
             bool invalidPosition =
-                position.Linha < 0 || // Linha é menor que a capacidade da matriz do tabuleiro
-                position.Coluna < 0 || // Coluna é menor que a capacidade da matriz do tabuleiro
-                position.Linha >= Linhas || // Linha é maior que a capacidade da matriz do tabuleiro
-                position.Coluna >= Colunas; // Coluna é maior que a capacidade da matriz do tabuleiro
+                position.Row < 0 || // Linha é menor que a capacidade da matriz do tabuleiro
+                position.Column < 0 || // Coluna é menor que a capacidade da matriz do tabuleiro
+                position.Row >= Linhas || // Linha é maior que a capacidade da matriz do tabuleiro
+                position.Column >= Colunas; // Coluna é maior que a capacidade da matriz do tabuleiro
 
             return !invalidPosition;
         }
